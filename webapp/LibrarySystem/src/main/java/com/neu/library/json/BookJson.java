@@ -3,7 +3,7 @@ package com.neu.library.json;
 import com.neu.library.model.Book;
 
 public class BookJson {
-
+	
 	private String id;
 	private String title;
 	private String author;
@@ -11,12 +11,11 @@ public class BookJson {
 	private int quantity;
 	
 	public BookJson(Book book) {
-		super();
 		this.id = book.getId();
 		this.title = book.getTitle();
-		this.author = book.getAuthor();
 		this.isbn = book.getIsbn();
 		this.quantity = book.getQuantity();
+		this.author = book.getAuthor();
 	}
 	public String getId() {
 		return id;
@@ -49,4 +48,5 @@ public class BookJson {
 		this.quantity = quantity;
 	}
 	
+
 }
