@@ -3,33 +3,55 @@ package com.neu.library.response;
 import org.springframework.http.HttpStatus;
 
 public class ApiResponse {
-	private HttpStatus status;
-	private String successMessage;
-	private String errorMessage;
-	
-	public ApiResponse(HttpStatus status, String successMessage, String errorMessage) {
-		super();
-		this.status = status;
-		this.successMessage = successMessage;
-		this.errorMessage = errorMessage;
-	}
-	public HttpStatus getStatus() {
-		return status;
+
+	   private HttpStatus status;
+	    private String message;
+	    private String error;
+	 
+	    
+	 
+	    public ApiResponse(HttpStatus status, String message, String error) {
+	        super();
+	        this.status = status;
+	        this.message = message;
+	        this.error = error;
 	}
 
-	public void setStatus(HttpStatus status) {
-		this.status = status;
-	}
-	public String getSuccessMessage() {
-		return successMessage;
-	}
-	public void setSuccessMessage(String successMessage) {
-		this.successMessage = successMessage;
-	}
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+	    public HttpStatus getStatus() {
+			return status;
+		}
+		public void setStatus(HttpStatus status) {
+			this.status = status;
+		}
+
+
+
+		public String getMessage() {
+			return message;
+		}
+
+
+
+		public void setMessage(String message) {
+			this.message = message;
+		}
+
+
+
+		public String getError() {
+			return error;
+		}
+
+
+
+		public void setError(String error) {
+			this.error = error;
+		}
+
+
+
+
+
+
+
 }
