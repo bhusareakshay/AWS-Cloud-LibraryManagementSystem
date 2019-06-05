@@ -1,4 +1,4 @@
-package com.neu.library.Json;
+package com.neu.library.json;
 
 import com.neu.library.model.Book;
 

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.neu.library.Json.BookJson;
 import com.neu.library.dao.BookDAO;
+import com.neu.library.json.BookJson;
 import com.neu.library.model.Book;
 
 
