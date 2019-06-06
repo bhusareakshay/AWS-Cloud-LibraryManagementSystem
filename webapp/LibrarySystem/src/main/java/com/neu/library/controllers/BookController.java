@@ -1,4 +1,4 @@
-package com.neu.library.controller;
+package com.neu.library.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

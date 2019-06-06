@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.neu.library.DAO.UserDAO;
+import com.neu.library.dao.UserDAO;
 import com.neu.library.controllers.UserRegisterController;
 import com.neu.library.json.UserCredential;
 import com.neu.library.model.User;
