@@ -53,14 +53,7 @@ public class HomePageController {
 			return new ResponseEntity<Object>(apiResponse, new HttpHeaders(), HttpStatus.OK);
 		}
 		
-		
-		
-		/*
-		 * apiResponse = new ApiResponse(HttpStatus.OK, new Date().toString(), "NA");
-		 * 
-		 * return new ResponseEntity<Object>(apiResponse, new
-		 * HttpHeaders(),HttpStatus.OK);
-		 */
-	}
+
+}
 
 }
