@@ -12,9 +12,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import com.neu.library.services.LoginService;
 
+@Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private LoginService loginService;
@@ -22,14 +24,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication auth) {
 		// System.out.println("inside CustomAuthenticationProvider");
+
 		UsernamePasswordAuthenticationToken authenticationToken = null;
 		try {
 			String username = "";
 			String password = "";
 			try {
+				System.out.println("in #0");
 				username = String.valueOf(auth.getName());
 				password = String.valueOf(auth.getCredentials().toString());
-				
+
 			} catch (Exception e) {
 				username = "";
 				password = "";
@@ -39,13 +43,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				if ((username == null || username.contentEquals(""))
 						&& (password == null || password.contentEquals(""))) {
+					System.out.println("in #1");
 					authenticationToken = new UsernamePasswordAuthenticationToken("User not logged in", "",
 							new ArrayList<>());
 					return authenticationToken;
 				}
 
 				if (username == null || username.contentEquals("")) {
-
+					System.out.println("in #2");
 					authenticationToken = new UsernamePasswordAuthenticationToken("Username not entered", "",
 							new ArrayList<>());
 					return authenticationToken;
@@ -59,7 +64,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				}
 
 				boolean userNameExists = this.loginService.checkIfUserExists(username);
-				
+
 				if (!userNameExists) {
 
 					authenticationToken = new UsernamePasswordAuthenticationToken("Username does not exist", "",
@@ -67,7 +72,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					return authenticationToken;
 				} else {
 					boolean authenticate = this.loginService.checkUser(username, password);
-					// System.out.println("loginService result:"+authenticate);
+					System.out.println("loginService result:" + authenticate);
 					if (authenticate) {
 						Collection<? extends GrantedAuthority> authorities = Collections
 								.singleton(new SimpleGrantedAuthority("ROLE_USER"));
@@ -75,6 +80,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 						return authenticationToken;
 					} else {
+						System.out.println("in #3");
 //			    	throw new BadCredentialsException("Invalid Credentials");
 						authenticationToken = new UsernamePasswordAuthenticationToken("Invalid Credentials", "",
 								new ArrayList<>());
@@ -92,13 +98,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 			throw new BadCredentialsException("Invalid Service Provider");
 		}
-		
 
 	}
 
 	@Override
 	public boolean supports(Class<? extends Object> authentication) {
 		return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
-}
+	}
 
 }

@@ -7,8 +7,11 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import com.neu.library.model.User;
 
+import org.springframework.stereotype.Service;
+
+import com.neu.library.model.User;
+@Service
 public class UserDAO {
 	@PersistenceContext
 	EntityManager entityManager;
