@@ -44,5 +44,5 @@ public class BookController {
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
 		}
 		return this.bookservice.addBook(book);
-}
+	}
 }
