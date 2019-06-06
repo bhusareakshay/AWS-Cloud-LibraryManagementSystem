@@ -1,15 +1,12 @@
 package com.neu.library.dao;
 
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
-
 import com.neu.library.model.User;
 @Service
 public class UserDAO {

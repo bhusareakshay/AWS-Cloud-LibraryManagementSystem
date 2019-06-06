@@ -22,7 +22,7 @@ public class UserRegisterController {
 	@Autowired
 	UserRegisterService registerService;
 	
-	@RequestMapping(value="user/register" ,method=RequestMethod.POST)
+	@RequestMapping(value="/user/register" ,method=RequestMethod.POST)
 	public ResponseEntity<Object>registerUser(@Valid @RequestBody UserCredential cred){
 		
 		return registerService.registerUser(cred);
