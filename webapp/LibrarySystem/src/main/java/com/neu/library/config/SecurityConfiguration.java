@@ -10,9 +10,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+import ch.qos.logback.classic.Logger;
+
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+	@Autowired
+	CustomAuthenticationProvider customAuthenticationProvider;
+
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -20,18 +25,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		httpSecurity.httpBasic().and().authorizeRequests().antMatchers("/").authenticated();
 		httpSecurity.httpBasic().and().authorizeRequests().antMatchers("/book").authenticated();
 		httpSecurity.csrf().disable();
+		//Logger.info("in101");
+		
 	}
-	@Override
+
 	public void configure(WebSecurity web) throws Exception 
 	{
-		System.out.println("I am here");
-		web.ignoring().antMatchers(HttpMethod.POST, "/user/register");
-	}
-	@Autowired
-	CustomAuthenticationProvider customAuthenticationProvider;
-
+		web.ignoring().antMatchers(HttpMethod.POST, "/user/register/");
+}
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-	    auth.authenticationProvider(customAuthenticationProvider);
+	  auth.authenticationProvider(customAuthenticationProvider);
 	}
 }
