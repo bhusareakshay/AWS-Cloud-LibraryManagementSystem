@@ -30,7 +30,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			String username = "";
 			String password = "";
 			try {
-				System.out.println("in #0");
+				
 				username = String.valueOf(auth.getName());
 				password = String.valueOf(auth.getCredentials().toString());
 
@@ -43,14 +43,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				if ((username == null || username.contentEquals(""))
 						&& (password == null || password.contentEquals(""))) {
-					System.out.println("in #1");
+					
 					authenticationToken = new UsernamePasswordAuthenticationToken("User not logged in", "",
 							new ArrayList<>());
 					return authenticationToken;
 				}
 
 				if (username == null || username.contentEquals("")) {
-					System.out.println("in #2");
+					
 					authenticationToken = new UsernamePasswordAuthenticationToken("Username not entered", "",
 							new ArrayList<>());
 					return authenticationToken;
