@@ -23,9 +23,41 @@ public class BookDAO {
 		return book;
 	}
 	
+	@Transactional
 	public List<Book> getBooks(){
 		Query query = this.entityManager.createQuery("FROM Book");
 		List<Book> bookList = query.getResultList();
-		return bookList;	
+		return bookList;
+	}	
+	
+	@Transactional
+	public Book getBookById(String id) {
+		
+		Book book;
+		book = entityManager.find(Book.class,id);
+		return book;	
+	}
+	
+	@Transactional
+	public Book updateBook(Book book, String id) {
+		Book bookToBeUpdated = this.entityManager.find(Book.class, id);
+		bookToBeUpdated.setTitle(book.getTitle());
+		bookToBeUpdated.setAuthor(book.getAuthor());
+		bookToBeUpdated.setIsbn(book.getIsbn());
+		bookToBeUpdated.setQuantity(book.getQuantity());
+		flushAndClear();
+		return bookToBeUpdated;
+	}
+	
+	@Transactional
+	public void deleteById(Book book) {
+			entityManager.remove(book);
+	flushAndClear();
+		
+	}
+	
+	void flushAndClear() {
+	    entityManager.flush();
+	    entityManager.clear();
 	}
 }

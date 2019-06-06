@@ -3,8 +3,10 @@ package com.neu.library.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -92,5 +94,35 @@ public class BookController {
 			apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Quantity", "Please Enter Qunatity");
 			return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
 		}
+		
+		return this.bookservice.updateBook(book);
 	}
+	
+	@RequestMapping(value= "/book/{id}", method=RequestMethod.GET)
+	public ResponseEntity<Object> getBook(@PathVariable @NonNull String id){
+		ApiResponse errorResponse;
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials") || message.equals("Username not entered") || message.equals("Password not entered")) {
+			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
+		}
+		
+		return bookservice.getBookById(id);
+		
+		
+	}
+	
+	
+	@RequestMapping(value="book/{id}" ,method=RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteBook(@PathVariable @NonNull String id){
+		ApiResponse errorResponse;
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials") || message.equals("Username not entered") || message.equals("Password not entered")) {
+			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
+		}
+		return bookservice.deleteBookById(id);
+		
+	}
+	
 }
