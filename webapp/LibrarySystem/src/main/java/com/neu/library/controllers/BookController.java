@@ -45,4 +45,52 @@ public class BookController {
 		}
 		return this.bookservice.addBook(book);
 	}
+	
+	
+	@RequestMapping(value="/book", method = RequestMethod.GET)
+	public ResponseEntity<Object> getAllBooks(){
+		
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiResponse apiResponse;
+		
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials")|| message.equals("Username not entered") || message.equals("Password not entered")) {
+			apiResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.UNAUTHORIZED);
+		}
+		
+		return this.bookservice.getBooks();
+		
+	}
+	
+	@RequestMapping(value="/book", method = RequestMethod.PUT)
+	public ResponseEntity<Object> updateBook(@RequestBody Book book){
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiResponse apiResponse;
+		
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials")|| message.equals("Username not entered") || message.equals("Password not entered")) {
+			apiResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.UNAUTHORIZED);
+		}
+		
+		if(StringUtils.isEmpty(book.getId())) {
+			apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter ID", "Please Enter ID");
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
+		}
+		if (StringUtils.isEmpty(book.getTitle())) {
+			apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Title", "Please Enter Title");
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
+		}
+		if (StringUtils.isEmpty(book.getAuthor())) {
+			apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Author", "Please Enter Author");
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
+		}
+		if (StringUtils.isEmpty(book.getIsbn())) {
+			apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter ISBN", "Please Enter ISBN");
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
+		}
+		if (StringUtils.isEmpty(book.getQuantity())) {
+			apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Quantity", "Please Enter Qunatity");
+			return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
+		}
+	}
 }

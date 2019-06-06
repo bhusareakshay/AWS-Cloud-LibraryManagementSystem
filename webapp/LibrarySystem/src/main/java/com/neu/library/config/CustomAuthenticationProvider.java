@@ -12,9 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import com.neu.library.services.LoginService;
-
+@Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private LoginService loginService;
