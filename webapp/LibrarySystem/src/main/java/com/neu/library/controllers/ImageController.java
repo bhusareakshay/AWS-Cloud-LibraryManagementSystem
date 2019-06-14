@@ -32,7 +32,8 @@ public class ImageController {
 		}
 		return this.imageService.addAttachmenttoBook(bookId, file);
 }
-	@RequestMapping(value = "/book/{bookId}/image/{idImage}", method = RequestMethod.PUT	)
+
+	@RequestMapping(value = "/book/{bookId}/image/{idImage}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> updateAttachmentToNote(@PathVariable("bookId") @NotNull String bookId, @PathVariable("idImage") @NotNull String imageId, @RequestParam("file") MultipartFile file) {
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiResponse errorResponse;
@@ -40,7 +41,24 @@ public class ImageController {
 			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
 		}
-		
 		return this.imageService.updateImageToBook(bookId, imageId,file);
-}
+	}
+	
+	@RequestMapping(value = "/book/{bookId}/image/{imageId}", method = RequestMethod.DELETE	)
+	public ResponseEntity<Object> deleteAttachmentToNote(@PathVariable("bookId") @NotNull String bookId, @PathVariable("imageId") @NotNull String imageId) {
+
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiResponse errorResponse;
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials")|| message.equals("Username not entered") || message.equals("Password not entered")) {
+			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
+		}
+
+		
+		return this.imageService.delete(bookId, imageId);
+	}
+	
+	
+	
+
 }

@@ -14,34 +14,35 @@ import com.neu.library.model.Book;
 import com.neu.library.model.Image;
 import com.neu.library.response.ApiResponse;
 
-@Service 
+@Service
 public class ImageService {
 	@Autowired
 	ImageDAO imageDao;
 	@Autowired
 	BookDAO bookDao;
-	
+
 	public ResponseEntity<Object> addAttachmenttoBook(String bookId, MultipartFile file) {
 		ImageJson imageJSON = null;
 		ApiResponse apiResponse = null;
 		Book book = bookDao.getBookById(bookId);
 		String filetype = FilenameUtils.getExtension(file.getOriginalFilename());
 		try {
-			
+
 			if (book == null) {
 				apiResponse = new ApiResponse(HttpStatus.NOT_FOUND, "Note not found", "Note not found");
 				return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
-			} 
-			if(!(filetype.equals("png")||filetype.equals("jpeg")||filetype.equals("jpg"))) {
-				apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "The File is of different type", "The file is of different type");
+			}
+			if (!(filetype.equals("png") || filetype.equals("jpeg") || filetype.equals("jpg"))) {
+				apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "The File is of different type",
+						"The file is of different type");
 				return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
-				
+
 			}
 			if (book.getImage() != null) {
-				apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "The Image already present", "The Image already present");
+				apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "The Image already present",
+						"The Image already present");
 				return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
-			}
-			else {
+			} else {
 				imageJSON = new ImageJson(this.imageDao.saveImageToLocal(file, book));
 			}
 		} catch (Exception e) {
@@ -49,7 +50,39 @@ public class ImageService {
 		}
 
 		return new ResponseEntity<Object>(imageJSON, HttpStatus.CREATED);
-}
+	}
+	
+	
+	public ResponseEntity<Object> delete(String bookId , String imageId) 
+	{
+		ApiResponse apiResponse = null;
+		try {
+			Book book = this.bookDao.getBookById(bookId);
+			if (book == null) {
+				apiResponse = new ApiResponse(HttpStatus.NOT_FOUND, "No such Book found", "No such Book found");
+				return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
+			} 
+			else 
+			{
+				Image imageToBeDeleted = this.imageDao.getImageFromId(imageId);
+				if (imageToBeDeleted == null) {
+					apiResponse = new ApiResponse(HttpStatus.NOT_FOUND, "Image not found", "Image not found");
+					return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
+				}else
+				{
+					//delete actual file from local/S3 bucket
+					this.imageDao.deleteImageFromLocal(imageId);
+				}
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ResponseEntity<Object>(null, HttpStatus.NO_CONTENT);
+		
+	}
 
 	public ResponseEntity<Object> updateImageToBook( String bookId , String imageId,MultipartFile file) 
 	{
