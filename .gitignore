@@ -105,7 +105,6 @@ venv.bak/
 
 
 images/
-*.class
 *.war
 *.jar
 
