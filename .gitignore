@@ -102,3 +102,16 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+images/
+*.class
+*.war
+*.jar
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+
