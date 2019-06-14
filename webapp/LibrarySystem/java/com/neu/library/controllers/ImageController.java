@@ -22,7 +22,7 @@ public class ImageController {
 	ImageService imageService;
 
 	@RequestMapping(value = "/book/{bookId}/image", method = RequestMethod.POST)
-	public ResponseEntity<Object> addAttachmentToNote(@PathVariable @NotNull String bookId,
+	public ResponseEntity<Object> imageToBook(@PathVariable @NotNull String bookId,
 			@RequestParam("file") MultipartFile file) {
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiResponse errorResponse;
@@ -34,7 +34,7 @@ public class ImageController {
 }
 
 	@RequestMapping(value = "/book/{bookId}/image/{idImage}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> updateAttachmentToNote(@PathVariable("bookId") @NotNull String bookId, @PathVariable("idImage") @NotNull String imageId, @RequestParam("file") MultipartFile file) {
+	public ResponseEntity<Object> upadateImageToBook(@PathVariable("bookId") @NotNull String bookId, @PathVariable("idImage") @NotNull String imageId, @RequestParam("file") MultipartFile file) {
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiResponse errorResponse;
 		if (message.equals("Username does not exist") || message.equals("Invalid Credentials")|| message.equals("Username not entered") || message.equals("Password not entered")) {
@@ -43,9 +43,19 @@ public class ImageController {
 		}
 		return this.imageService.updateImageToBook(bookId, imageId,file);
 	}
+	@RequestMapping(value = "/book/{bookId}/image/{idImage}", method = RequestMethod.GET)
+	public ResponseEntity<Object> getImageToBook(@PathVariable("bookId") @NotNull String bookId, @PathVariable("idImage") @NotNull String imageId, @RequestParam("file") MultipartFile file) {
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiResponse errorResponse;
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials")|| message.equals("Username not entered") || message.equals("Password not entered")) {
+			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
+		}
+		return this.imageService.getImageById(imageId);
+	}
 	
 	@RequestMapping(value = "/book/{bookId}/image/{imageId}", method = RequestMethod.DELETE	)
-	public ResponseEntity<Object> deleteAttachmentToNote(@PathVariable("bookId") @NotNull String bookId, @PathVariable("imageId") @NotNull String imageId) {
+	public ResponseEntity<Object> deleteImage(@PathVariable("bookId") @NotNull String bookId, @PathVariable("imageId") @NotNull String imageId) {
 
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiResponse errorResponse;

@@ -1,5 +1,7 @@
 package com.neu.library.services;
 
+import javax.persistence.NoResultException;
+
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.neu.library.dao.BookDAO;
 import com.neu.library.dao.ImageDAO;
+import com.neu.library.json.BookJson;
 import com.neu.library.json.ImageJson;
 import com.neu.library.model.Book;
 import com.neu.library.model.Image;
@@ -83,7 +86,30 @@ public class ImageService {
 		return new ResponseEntity<Object>(null, HttpStatus.NO_CONTENT);
 		
 	}
-
+	
+	public ResponseEntity<Object> getImageById(String id){
+		Image image;
+		
+		try {
+			
+		image=imageDao.getImageFromId(id);		
+		}
+		catch(NoResultException e){
+			ApiResponse resp = new ApiResponse(HttpStatus.NOT_FOUND, "The requested resource could not be found", "Resource not available");
+			return new ResponseEntity<Object>(resp, HttpStatus.NOT_FOUND);
+		}
+		
+		if(image != null) {
+	
+			return new ResponseEntity<Object>(new ImageJson(image), HttpStatus.OK);
+		}
+		
+		else {
+			ApiResponse resp = new ApiResponse(HttpStatus.NOT_FOUND, "The requested resource could not be found", "Resource not available");
+			return new ResponseEntity<Object>(resp, HttpStatus.NOT_FOUND);
+			
+		}
+}
 	public ResponseEntity<Object> updateImageToBook( String bookId , String imageId,MultipartFile file) 
 	{
 		ApiResponse apiResponse = null;
