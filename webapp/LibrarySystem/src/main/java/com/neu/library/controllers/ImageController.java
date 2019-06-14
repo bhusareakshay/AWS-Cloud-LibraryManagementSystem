@@ -40,6 +40,7 @@ public class ImageController {
 			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
 		}
+		
 		return this.imageService.updateImageToBook(bookId, imageId,file);
 }
 }
