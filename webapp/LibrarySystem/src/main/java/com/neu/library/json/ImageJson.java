@@ -5,12 +5,12 @@ import com.neu.library.model.Image;
 public class ImageJson {
 	
 	private String Id;
-	private String file;
+	private String url;
 	
 	
 	public ImageJson(Image image) {
 		this.Id = image.getId();
-		this.file = image.getUrl();
+		this.url = image.getUrl();
 	}
 
 
@@ -24,14 +24,16 @@ public class ImageJson {
 	}
 
 
-	public String getFile() {
-		return file;
+	public String getUrl() {
+		return url;
 	}
 
 
-	public void setFile(String file) {
-		this.file = file;
+	public void setUrl(String url) {
+		this.url = url;
 	}
+
+
 	
 	
 	
