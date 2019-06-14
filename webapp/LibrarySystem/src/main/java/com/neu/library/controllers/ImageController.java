@@ -32,4 +32,19 @@ public class ImageController {
 		}
 		return this.imageService.addAttachmenttoBook(bookId, file);
 }
+	
+	@RequestMapping(value = "/book/{bookId}/image/{imageId}", method = RequestMethod.DELETE	)
+	public ResponseEntity<Object> deleteAttachmentToNote(@PathVariable("bookId") @NotNull String bookId, @PathVariable("imageId") @NotNull String imageId) {
+		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ApiResponse errorResponse;
+		if (message.equals("Username does not exist") || message.equals("Invalid Credentials")|| message.equals("Username not entered") || message.equals("Password not entered")) {
+			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
+			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
+		}
+		return this.imageService.delete(bookId, imageId);
+	}
+	
+	
+	
+	
 }
