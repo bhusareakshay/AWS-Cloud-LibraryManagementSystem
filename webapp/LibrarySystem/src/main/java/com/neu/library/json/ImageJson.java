@@ -1,14 +1,16 @@
 package com.neu.library.json;
 
+import com.neu.library.model.Image;
+
 public class ImageJson {
 	
 	private String Id;
 	private String file;
 	
 	
-	public ImageJson(String id, String file) {
-		this.Id = id;
-		this.file = file;
+	public ImageJson(Image image) {
+		this.Id = image.getId();
+		this.file = image.getUrl();
 	}
 
 
