@@ -21,7 +21,7 @@ public class Image {
 	@Column(name = "id", nullable = false, updatable = false, columnDefinition = "varchar(100)")
 	private String id;
 
-	private String fileName;
+	private String url;
 
 	@OneToOne
 	@JoinColumn
@@ -31,8 +31,8 @@ public class Image {
 
 	}
 
-	public Image(String fileName, Book book) {
-		this.fileName = fileName;
+	public Image(String url, Book book) {
+		this.url = url;
 		this.book = book;
 	}
 
@@ -44,12 +44,12 @@ public class Image {
 		this.id = id;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	public Book getBook() {
