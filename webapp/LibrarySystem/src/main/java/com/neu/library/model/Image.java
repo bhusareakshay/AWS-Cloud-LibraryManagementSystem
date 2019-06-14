@@ -22,7 +22,6 @@ public class Image {
 	private String id;
 
 	private String fileName;
-	private String fileType;
 
 	@OneToOne
 	@JoinColumn
@@ -32,9 +31,8 @@ public class Image {
 
 	}
 
-	public Image(String fileName, String fileType, Book book) {
+	public Image(String fileName, Book book) {
 		this.fileName = fileName;
-		this.fileType = fileType;
 		this.book = book;
 	}
 
@@ -52,14 +50,6 @@ public class Image {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	public String getFileType() {
-		return fileType;
-	}
-
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
 	}
 
 	public Book getBook() {
