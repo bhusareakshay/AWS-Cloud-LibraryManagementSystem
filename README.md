@@ -27,7 +27,7 @@
    ```
 2. Add below mysql user to allow application to connect to the database 
    ```
-   grant all privileges on librarydb.* to 'appuser' identified by 'appuser'
+   grant all privileges on librarydb.* to 'appuser' identified by 'pass'
    ```
    ```
    Note : If using different MySQL credentials, you need to input the correct credentials in file webapp/LibrarySystem/src/main/resources/application.properties
