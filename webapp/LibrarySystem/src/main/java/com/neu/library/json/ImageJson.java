@@ -28,10 +28,11 @@ public class ImageJson {
 		return url;
 	}
 
-
-	public void setFile(String url) {
+	public void setUrl(String url) {
 		this.url = url;
 	}
+
+
 	
 	
 	

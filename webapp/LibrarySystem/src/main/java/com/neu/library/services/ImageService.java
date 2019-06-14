@@ -84,4 +84,40 @@ public class ImageService {
 		
 	}
 
+	public ResponseEntity<Object> updateImageToBook( String bookId , String imageId,MultipartFile file) 
+	{
+		ApiResponse apiResponse = null;
+		String filetype = FilenameUtils.getExtension(file.getOriginalFilename());
+		try {
+			Book book = this.bookDao.getBookById(bookId);
+			if (book == null) {
+				apiResponse = new ApiResponse(HttpStatus.NOT_FOUND, "Note not found", "Note not found");
+				return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
+			} 
+			if(!(filetype.equals("png")||filetype.equals("jpeg")||filetype.equals("jpg"))) {
+				apiResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "The File is of different type", "The file is of different type");
+				return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
+				
+			}
+			else 
+			{
+				Image imageToBeUpdated = this.imageDao.getImageFromId(imageId);
+				if (imageToBeUpdated == null) {
+					apiResponse = new ApiResponse(HttpStatus.NOT_FOUND, "Image not found", "Image not found");
+					return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
+				}else
+				{
+					this.imageDao.updateAttachmentFromLocal(imageId,imageToBeUpdated, file, book);
+				}
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ResponseEntity<Object>(null, HttpStatus.NO_CONTENT);
+		
+}
+
 }
