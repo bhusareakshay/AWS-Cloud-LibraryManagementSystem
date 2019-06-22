@@ -23,6 +23,8 @@ public class Image {
 
 	private String url;
 
+	//@MapsId
+	//@JsonIgnore
 	@OneToOne
 	@JoinColumn
 	private Book book;
