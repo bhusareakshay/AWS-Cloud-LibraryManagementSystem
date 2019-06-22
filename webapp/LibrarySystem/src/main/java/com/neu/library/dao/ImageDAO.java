@@ -102,8 +102,6 @@ public class ImageDAO {
 		String path = imageToBeDeleted.getUrl();
 
 		try {
-			System.out.println("-------------------------------111111111");
-			System.out.println(path);
 			java.io.File fileToBeDeleted = new java.io.File(path);
 			if (fileToBeDeleted.delete()) {
 				System.out.println("-------------------------------");
