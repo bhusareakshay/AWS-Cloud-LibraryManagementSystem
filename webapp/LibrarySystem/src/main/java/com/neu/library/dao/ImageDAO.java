@@ -1,5 +1,8 @@
 package com.neu.library.dao;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +43,7 @@ public class ImageDAO {
 				Path path = Paths.get(UPLOADED_FOLDER + filename);
 				Files.write(path, file.getBytes());
 				image = new Image(path.toString(), book);
+				System.out.println("Image path : " + path.toString());
 				this.entityManager.persist(image);
 			
 		} catch (Exception e) {
@@ -98,8 +102,11 @@ public class ImageDAO {
 		String path = imageToBeDeleted.getUrl();
 
 		try {
-			java.io.File fileToBeDeleted = new java.io.File((path));
+			System.out.println("-------------------------------111111111");
+			System.out.println(path);
+			java.io.File fileToBeDeleted = new java.io.File(path);
 			if (fileToBeDeleted.delete()) {
+				System.out.println("-------------------------------");
 				return true;
 			} else {
 				return false;
@@ -116,10 +123,14 @@ public class ImageDAO {
 	{
 		//delete actual file from local
 		boolean successfullyDeleted = deleteFromMemory(image);
+		String filename ="";
 		
 		if (successfullyDeleted) 
 		{ 
-			saveAttachmentToLocalMemory(file, book); 
+			String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
+			filename = fileNameWithOutExt + "_" + new Date().getTime() + "."
+					+ FilenameUtils.getExtension(file.getOriginalFilename());
+			saveAttachmentToLocalMemory(file, book, filename); 
 		}
 		 
 
@@ -127,9 +138,7 @@ public class ImageDAO {
 		if (successfullyDeleted)
 		{
 			//update entry from DB
-			String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
-			String filename = fileNameWithOutExt + "_" + new Date().getTime() + "."
-					+ FilenameUtils.getExtension(file.getOriginalFilename());
+			
 			Path path = Paths.get(UPLOADED_FOLDER + filename);
 			image = new Image(path.toString(), book);
 			attachmentToBeUpdated1 =updateInDB(id, image);
@@ -140,13 +149,11 @@ public class ImageDAO {
 	}
 	
 	
-	private void saveAttachmentToLocalMemory(MultipartFile file, Book book) {
-		String filename ="";
+	private void saveAttachmentToLocalMemory(MultipartFile file, Book book, String filename) {
+		
 		try {
 			Files.createDirectories(Paths.get(UPLOADED_FOLDER));
-			String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
-			filename = fileNameWithOutExt + "_" + new Date().getTime() + "."
-					+ FilenameUtils.getExtension(file.getOriginalFilename());
+			
 			Path path = Paths.get(UPLOADED_FOLDER + filename);
 			Files.write(path, file.getBytes());
 		} catch (Exception e) {
