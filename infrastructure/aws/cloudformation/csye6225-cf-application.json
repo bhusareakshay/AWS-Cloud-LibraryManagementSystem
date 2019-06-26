@@ -81,25 +81,17 @@
     "myEC2Instance":{  
         "Type":"AWS::EC2::Instance",
         "Properties":{ 
-		"KeyName":"key", 
             "ImageId":"ami-01aea184beb8e5b59",
             "InstanceType":"t2.micro",
-            "DisableApiTermination":"false",
-            "BlockDeviceMappings":[  
-                {  
-                    "DeviceName":"/dev/sdf",
-                    "Ebs":{  
-                        "VolumeType":"gp2",
-                        "DeleteOnTermination":"true",
-                        "VolumeSize":"20"
-                    }
-                }
-            ],
-	"SecurityGroupIds":[{"Fn::GetAtt":["WebServerSecurityGroup","GroupId"]}],
-	"SubnetId":"subnet-04859ba16c23f5cdf"
+	    "NetworkInterfaces" : [{
+                    "GroupSet"                 : [{"Ref":"WebServerSecurityGroup"}], 
+                    "AssociatePublicIpAddress" : "true",
+		    "DeviceIndex"	       : "0",
+                    "DeleteOnTermination"      : "true",
+                    "SubnetId"                 : {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}} 
+               }]
 	}
     },
-
     "myDynamoDBTable":{  
         "Type":"AWS::DynamoDB::Table",
         "Properties":{  
