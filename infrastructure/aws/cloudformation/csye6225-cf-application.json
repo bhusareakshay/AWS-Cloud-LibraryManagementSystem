@@ -1,0 +1,126 @@
+{  
+    "AWSTemplateFormatVersion":"2010-09-09",
+    "Description":"Application JSON",
+    "Parameters":{  
+        "StackName":{  
+            "Type":"String",
+            "Description":"Enter Stack Name"
+        },
+        "NetworkStackName":{  
+            "Type":"String",
+            "Description":"Enter Network stack name"
+        },
+        "AmiId":{  
+            "Type":"String",
+            "Description":"Enter AMI ID"
+        }
+    },
+    "Resources":{  
+        "WebServerSecurityGroup":{  
+            "Type":"AWS::EC2::SecurityGroup",
+            "Properties":{  
+                "GroupDescription":"This Security Group is for Webserver",
+                "VpcId":{  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-vpcid"
+                    }
+                },
+                "SecurityGroupIngress":[  
+                    {  
+                        "IpProtocol":"tcp",
+                        "CidrIp":"0.0.0.0/0",
+                        "FromPort":22,
+                        "ToPort":22
+                    },
+                    {  
+                        "IpProtocol":"tcp",
+                        "CidrIp":"0.0.0.0/0",
+                        "FromPort":80,
+                        "ToPort":80
+                    },
+                    {  
+                        "IpProtocol":"tcp",
+                        "CidrIp":"0.0.0.0/0",
+                        "FromPort":443,
+                        "ToPort":443
+                    }
+                ]
+            }
+        },
+        "DBServerSecurityGroup":{  
+            "Type":"AWS::EC2::SecurityGroup",
+            "Properties":{  
+                "GroupDescription":"Enable SSH ingress",
+                "VpcId":{  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-vpcid"
+                    }
+                },
+                "SecurityGroupIngress":[  
+                    {  
+                        "IpProtocol":"tcp",
+                        "FromPort":"22",
+                        "ToPort":"22",
+                        "CidrIp":"0.0.0.0/0"
+                    },
+                    {  
+                        "IpProtocol":"tcp",
+                        "FromPort":"3306",
+                        "ToPort":"3306",
+                        "SourceSecurityGroupId":{  
+                            "Fn::GetAtt":[  
+                                "WebServerSecurityGroup",
+                                "GroupId"
+                            ]
+                        }
+                    }
+                ]
+            }
+        
+    },
+    "myEC2Instance":{  
+        "Type":"AWS::EC2::Instance",
+        "Properties":{ 
+		"KeyName":"key", 
+            "ImageId":"ami-01aea184beb8e5b59",
+            "InstanceType":"t2.micro",
+            "DisableApiTermination":"false",
+            "BlockDeviceMappings":[  
+                {  
+                    "DeviceName":"/dev/sdf",
+                    "Ebs":{  
+                        "VolumeType":"gp2",
+                        "DeleteOnTermination":"true",
+                        "VolumeSize":"20"
+                    }
+                }
+            ],
+	"SecurityGroupIds":[{"Fn::GetAtt":["WebServerSecurityGroup","GroupId"]}],
+	"SubnetId":"subnet-04859ba16c23f5cdf"
+	}
+    },
+
+    "myDynamoDBTable":{  
+        "Type":"AWS::DynamoDB::Table",
+        "Properties":{  
+            "TableName":"csye6225",
+            "AttributeDefinitions":[  
+                {  
+                    "AttributeName":"id",
+                    "AttributeType":"S"
+                }
+            ],
+            "KeySchema":[  
+                {  
+                    "AttributeName":"id",
+                    "KeyType":"HASH"
+                }
+            ],
+            "ProvisionedThroughput":{  
+                "ReadCapacityUnits":"5",
+                "WriteCapacityUnits":"5"
+            }
+        }
+    }
+}
+}
