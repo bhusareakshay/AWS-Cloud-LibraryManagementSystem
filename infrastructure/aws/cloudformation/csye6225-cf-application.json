@@ -81,16 +81,57 @@
     "myEC2Instance":{  
         "Type":"AWS::EC2::Instance",
         "Properties":{ 
-            "ImageId":"ami-01aea184beb8e5b59",
+            "ImageId":{"Ref":"AmiId"},
             "InstanceType":"t2.micro",
 	    "NetworkInterfaces" : [{
                     "GroupSet"                 : [{"Ref":"WebServerSecurityGroup"}], 
                     "AssociatePublicIpAddress" : "true",
 		    "DeviceIndex"	       : "0",
                     "DeleteOnTermination"      : "true",
-                    "SubnetId"                 : {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}} 
+                    "SubnetId"                 : {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}} 
                }]
 	}
+    },
+"myDBSubnetGroup":{  
+        "Type":"AWS::RDS::DBSubnetGroup",
+        "Properties":{  
+            "DBSubnetGroupDescription":"This is subnet description",
+            "SubnetIds":[  
+                {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet1id"
+                    }
+                },
+                {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet2id"
+                    }
+                },
+               {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet3id"
+                    }
+                }
+            ]
+        }
+    },
+    "myRDS":{  
+        "Type":"AWS::RDS::DBInstance",
+        "Properties":{  
+            "AllocatedStorage":"20",
+            "DBInstanceClass":"db.m4.large",
+            "MultiAZ":"false",
+            "DBInstanceIdentifier":"csye6225-su19",
+            "MasterUsername":"csye6225master",
+            "Engine":"MariaDB",
+            "MasterUserPassword":"csye6225password",
+            "DBSubnetGroupName":{  
+                "Ref":"myDBSubnetGroup"
+            },
+	"VPCSecurityGroups":[{"Ref":"WebServerSecurityGroup"}],
+            "PubliclyAccessible":"true",
+            "DBName":"csye6225"
+        }
     },
     "myDynamoDBTable":{  
         "Type":"AWS::DynamoDB::Table",
