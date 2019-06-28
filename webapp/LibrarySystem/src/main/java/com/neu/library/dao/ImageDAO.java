@@ -14,9 +14,14 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.neu.library.model.Book;
 import com.neu.library.model.Image;
 
@@ -25,9 +30,23 @@ public class ImageDAO {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+	@Value("${cloud.islocal}")
+	private boolean islocal;
+
+	@Value("${cloud.bucketName}")
+	private String bucketName;
 
 	private static String UPLOADED_FOLDER = System.getProperty("user.dir") + "//images//";
-	
+	@Transactional
+	public Image saveAttachment(MultipartFile file, Book book) {
+		System.out.println(this.islocal);
+		if (this.islocal) {
+			return this.saveImageToLocal(file,book);
+		} else {
+			return this.saveImagetToS3Bucket(file,book);
+		}
+
+	}
 	@Transactional
 	public Image saveImageToLocal(MultipartFile file, Book book) {
 		Image image = null;
@@ -51,6 +70,27 @@ public class ImageDAO {
 		}
 		return image;
 	}
+	private Image saveImagetToS3Bucket(MultipartFile file, Book book) {
+		Image image = null;
+		String filename;
+		try {
+			String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
+			filename = fileNameWithOutExt + "_" + new Date().getTime() + "."
+					+ FilenameUtils.getExtension(file.getOriginalFilename());
+			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
+			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			File tempFile = this.convert(file);
+			s3Client.putObject(new PutObjectRequest(this.bucketName, filename, tempFile));
+			String path = s3Client.getResourceUrl(this.bucketName, filename);
+			tempFile.delete();
+			image = new Image(path,book);
+			this.entityManager.persist(image);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return image;
+}
+	
 	private int checkIfImage(String bookId) {
 		
 		int result = 0;
@@ -83,6 +123,16 @@ public class ImageDAO {
 		Image imageToBeDeleted = this.entityManager.find(Image.class, id);
 		return imageToBeDeleted;
 	}
+	@Transactional
+	public void deleteImage( String id) {
+		if (this.islocal) {
+			 this.deleteImageFromLocal(id);
+		} else {
+			 this.deleteImageFromS3Bucket(id);
+		}
+
+	}
+
 	
 	
 	@Transactional
@@ -96,7 +146,36 @@ public class ImageDAO {
 			flushAndClear();
 		}
 	}
-	
+	@Transactional
+	public void deleteFromDB (String id)
+	{
+		Image imageToBeDeleted = this.entityManager.find(Image.class, id);
+		try{
+			this.entityManager.remove(imageToBeDeleted);
+			flushAndClear();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+}
+	@Transactional
+	public void deleteImageFromS3Bucket(String id) 
+	{
+		Image imageToBeDeleted = this.entityManager.find(Image.class, id);
+		String entirePath = imageToBeDeleted.getUrl();
+		String filename = entirePath.substring(entirePath.lastIndexOf("/")+1);
+		try {
+			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
+			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			s3Client.deleteObject(this.bucketName,filename);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		deleteFromDB(id);
+	}
+
 	@Transactional
 	public boolean deleteFromMemory(Image imageToBeDeleted) {
 		String path = imageToBeDeleted.getUrl();
@@ -158,7 +237,54 @@ public class ImageDAO {
 			e.printStackTrace();
 		}
 	}
-	
+	@Transactional
+	public Image updateAttachment(String id, Image image,MultipartFile file, Book book) 
+	{
+		if (this.islocal) {
+			 return this.updateAttachmentFromLocal(id, image, file, book);
+		} else {
+			 return this.updateAttachmentFromS3Bucket(id, image, file,book);
+		}
+	}
+
+	@Transactional
+	public Image updateAttachmentFromS3Bucket(String id, Image image,MultipartFile file,Book book) 
+	{
+		//delete actual file from S3bucket
+		Image imageToBeUpdated= this.entityManager.find(Image.class, id);
+		String entirePath = imageToBeUpdated.getUrl();
+		System.out.println(entirePath);
+		String filename = entirePath.substring(entirePath.lastIndexOf("/")+1);
+		System.out.println(filename);
+		try {
+			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
+			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			s3Client.deleteObject(this.bucketName,filename);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		//save new file in S3bucket
+		try {
+			String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
+			filename = fileNameWithOutExt + "_" + new Date().getTime() + "."
+					+ FilenameUtils.getExtension(file.getOriginalFilename());
+			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
+			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			File tempFile = this.convert(file);
+			s3Client.putObject(new PutObjectRequest(this.bucketName, filename, tempFile));
+			String path = s3Client.getResourceUrl(this.bucketName, filename);
+			tempFile.delete();
+			image = new Image(path, book);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+
+		//update entry from DB
+		Image imageToBeUpdated1 =updateInDB(id, image);
+		return imageToBeUpdated1;
+}
 	@Transactional
 	public Image updateInDB (String id, Image image)
 	{
@@ -176,7 +302,18 @@ public class ImageDAO {
 		this.entityManager.clear();
 	}
 	
-	
+	private File convert(MultipartFile file) {
+		File convFile = new File(file.getOriginalFilename());
+		try {
+			convFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(convFile);
+			fos.write(file.getBytes());
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return convFile;
+}
 	
 	
 
