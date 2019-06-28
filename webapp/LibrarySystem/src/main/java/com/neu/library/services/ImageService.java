@@ -46,7 +46,7 @@ public class ImageService {
 						"The Image already present");
 				return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
 			} else {
-				imageJSON = new ImageJson(this.imageDao.saveImageToLocal(file, book));
+				imageJSON = new ImageJson(this.imageDao.saveAttachment(file, book));
 			}
 		} catch (Exception e) {
 			System.err.println(e);
@@ -74,7 +74,7 @@ public class ImageService {
 				}else
 				{
 					//delete actual file from local/S3 bucket
-					this.imageDao.deleteImageFromLocal(imageId);
+					this.imageDao.deleteImage(imageId);
 				}
 				
 			}
@@ -133,7 +133,7 @@ public class ImageService {
 					return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
 				}else
 				{
-					this.imageDao.updateAttachmentFromLocal(imageId,imageToBeUpdated, file, book);
+					this.imageDao.updateAttachment(imageId,imageToBeUpdated, file, book);
 				}
 				
 			}

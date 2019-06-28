@@ -12,6 +12,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>LibrarySystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>LibrarySystem</name>
 	<description>Library management project for Spring Boot</description>
 

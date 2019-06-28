@@ -81,25 +81,58 @@
     "myEC2Instance":{  
         "Type":"AWS::EC2::Instance",
         "Properties":{ 
-		"KeyName":"key", 
-            "ImageId":"ami-01aea184beb8e5b59",
+            "ImageId":{"Ref":"AmiId"},
             "InstanceType":"t2.micro",
-            "DisableApiTermination":"false",
-            "BlockDeviceMappings":[  
-                {  
-                    "DeviceName":"/dev/sdf",
-                    "Ebs":{  
-                        "VolumeType":"gp2",
-                        "DeleteOnTermination":"true",
-                        "VolumeSize":"20"
-                    }
-                }
-            ],
-	"SecurityGroupIds":[{"Fn::GetAtt":["WebServerSecurityGroup","GroupId"]}],
-	"SubnetId":"subnet-04859ba16c23f5cdf"
+	    "NetworkInterfaces" : [{
+                    "GroupSet"                 : [{"Ref":"WebServerSecurityGroup"}], 
+                    "AssociatePublicIpAddress" : "true",
+		    "DeviceIndex"	       : "0",
+                    "DeleteOnTermination"      : "true",
+                    "SubnetId"                 : {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}} 
+               }]
 	}
     },
-
+"myDBSubnetGroup":{  
+        "Type":"AWS::RDS::DBSubnetGroup",
+        "Properties":{  
+            "DBSubnetGroupDescription":"This is subnet description",
+            "SubnetIds":[  
+                {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet1id"
+                    }
+                },
+                {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet2id"
+                    }
+                },
+               {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet3id"
+                    }
+                }
+            ]
+        }
+    },
+    "myRDS":{  
+        "Type":"AWS::RDS::DBInstance",
+        "Properties":{  
+            "AllocatedStorage":"20",
+            "DBInstanceClass":"db.m4.large",
+            "MultiAZ":"false",
+            "DBInstanceIdentifier":"csye6225-su19",
+            "MasterUsername":"csye6225master",
+            "Engine":"MariaDB",
+            "MasterUserPassword":"csye6225password",
+            "DBSubnetGroupName":{  
+                "Ref":"myDBSubnetGroup"
+            },
+	"VPCSecurityGroups":[{"Ref":"WebServerSecurityGroup"}],
+            "PubliclyAccessible":"true",
+            "DBName":"csye6225"
+        }
+    },
     "myDynamoDBTable":{  
         "Type":"AWS::DynamoDB::Table",
         "Properties":{  
