@@ -105,6 +105,11 @@ venv.bak/
 
 
 images/
+*.class
 *.war
 *.jar
 
+# Eclipse
+.classpath
+.project
+.settings/
