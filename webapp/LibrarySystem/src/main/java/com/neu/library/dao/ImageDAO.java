@@ -200,8 +200,7 @@ public class ImageDAO {
 		String entirePath = imageToBeDeleted.getUrl();
 		String filename = entirePath.substring(entirePath.lastIndexOf("/")+1);
 		try {
-			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
-			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 			s3Client.deleteObject(this.bucketName,filename);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -291,8 +290,7 @@ public class ImageDAO {
 		String filename = entirePath.substring(entirePath.lastIndexOf("/")+1);
 		System.out.println(filename);
 		try {
-			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
-			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 			s3Client.deleteObject(this.bucketName,filename);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -303,11 +301,10 @@ public class ImageDAO {
 			String fileNameWithOutExt = FilenameUtils.removeExtension(file.getOriginalFilename());
 			filename = fileNameWithOutExt + "_" + new Date().getTime() + "."
 					+ FilenameUtils.getExtension(file.getOriginalFilename());
-			AWSCredentials credentials = new ProfileCredentialsProvider().getCredentials();
-			AmazonS3Client s3Client = new AmazonS3Client(credentials);
+			AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 			File tempFile = this.convert(file);
 			s3Client.putObject(new PutObjectRequest(this.bucketName, filename, tempFile));
-			String path = s3Client.getResourceUrl(this.bucketName, filename);
+			String path = s3Client.getUrl(this.bucketName, filename).toString();
 			tempFile.delete();
 			image = new Image(path, book);
 		} catch (Exception e) {
