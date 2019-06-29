@@ -13,7 +13,15 @@
         "AmiId":{  
             "Type":"String",
             "Description":"Enter AMI ID"
-        }
+        },
+	"BucketName": {
+            "Type": "String",
+            "Description" : "Please enter string for code deploy bucket name"
+         },
+ 	"KeyName": {
+            "Type": "String",
+            "Description" : "Please enter string for Key Name"
+         }
     },
     "Resources":{  
         "WebServerSecurityGroup":{  
@@ -78,28 +86,121 @@
             }
         
     },
+    "EC2UploadToS3Policy": {
+           "Type" : "AWS::IAM::ManagedPolicy",
+           "Properties" : {
+               "ManagedPolicyName" : "EC2-Upload-To-S3",
+               "PolicyDocument" : {
+                   "Version" : "2012-10-17",
+                   "Statement": [ {
+                       "Effect"   : "Allow",
+                       "Action"   : [
+                            "s3:PutObject",
+			    "s3:Get*",
+                            "s3:DeleteObject"
+		       ],
+	               "Resource" : { "Fn::Sub" : "arn:aws:s3:::csye6225-su19-${BucketName}.me.csye6225.com/*"}
+		   } ]
+	       }
+           }
+       },
+     "EC2S3AccessRole": {
+	   "Type": "AWS::IAM::Role",
+           "Properties": {
+               "AssumeRolePolicyDocument": {
+                   "Version" : "2012-10-17",
+                   "Statement": [ {
+                       "Effect": "Allow",
+                       "Principal": {
+                           "Service": [ "ec2.amazonaws.com" ]
+                       },
+                       "Action": [ "sts:AssumeRole" ]
+                   } ]
+	       },
+	       "ManagedPolicyArns": [ {"Ref" : "EC2UploadToS3Policy"} ],
+    	       "RoleName": "EC2S3AccessRole"
+           }
+       },
+       "EC2InstanceProfile":{
+           "Type": "AWS::IAM::InstanceProfile",
+           "Properties": {
+               "Roles": [ {"Ref": "EC2S3AccessRole"} ],
+               "InstanceProfileName": "EC2InstanceProfile"
+           }
+       },     
     "myEC2Instance":{  
         "Type":"AWS::EC2::Instance",
         "Properties":{ 
-		"KeyName":"key", 
-            "ImageId":"ami-01aea184beb8e5b59",
+            "ImageId":{"Ref":"AmiId"},
             "InstanceType":"t2.micro",
-            "DisableApiTermination":"false",
-            "BlockDeviceMappings":[  
-                {  
-                    "DeviceName":"/dev/sdf",
-                    "Ebs":{  
-                        "VolumeType":"gp2",
-                        "DeleteOnTermination":"true",
-                        "VolumeSize":"20"
-                    }
-                }
-            ],
-	"SecurityGroupIds":[{"Fn::GetAtt":["WebServerSecurityGroup","GroupId"]}],
-	"SubnetId":"subnet-04859ba16c23f5cdf"
+		"KeyName" : {"Ref":"KeyName"},
+	    "NetworkInterfaces" : [{
+                    "GroupSet"                 : [{"Ref":"WebServerSecurityGroup"}], 
+                    "AssociatePublicIpAddress" : "true",
+		    "DeviceIndex"	       : "0",
+                    "DeleteOnTermination"      : "true",
+                    "SubnetId"                 : {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}} 
+               }],
+	       "IamInstanceProfile" : { "Ref" : "EC2InstanceProfile" },
+    		"UserData":{
+	           "Fn::Base64":{
+                       "Fn::Join":[
+                           "",
+			   [
+			       "#!/bin/bash \n",
+			       "echo export DB_HOST=",{"Fn::GetAtt": ["myRDS","Endpoint.Address"]}, " >> /etc/profile \n",
+			       "echo export DB_PORT=",{"Fn::GetAtt": ["myRDS","Endpoint.Port"]}," >> /etc/profile \n",
+			       "echo export DB_USERNAME='csye6225master' >> /etc/profile \n",
+			       "echo export DB_PASSWORD='csye6225password' >> /etc/profile \n",
+		    	       "echo export S3_BUCKET=",{"Fn::Sub": "csye6225-su19-${BucketName}.me.csye6225.com" }," >> /etc/profile \n",
+			       "source /etc/profile"
+			   ]
+		        ]
+           }
+       }
 	}
     },
-
+"myDBSubnetGroup":{  
+        "Type":"AWS::RDS::DBSubnetGroup",
+        "Properties":{  
+            "DBSubnetGroupDescription":"This is subnet description",
+            "SubnetIds":[  
+                {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet1id"
+                    }
+                },
+                {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet2id"
+                    }
+                },
+               {  
+                    "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-subnet3id"
+                    }
+                }
+            ]
+        }
+    },
+    "myRDS":{  
+        "Type":"AWS::RDS::DBInstance",
+        "Properties":{  
+            "AllocatedStorage":"20",
+            "DBInstanceClass":"db.m4.large",
+            "MultiAZ":"false",
+            "DBInstanceIdentifier":"csye6225-su19",
+            "MasterUsername":"csye6225master",
+            "Engine":"MariaDB",
+            "MasterUserPassword":"csye6225password",
+            "DBSubnetGroupName":{  
+                "Ref":"myDBSubnetGroup"
+            },
+	"VPCSecurityGroups":[{"Ref":"DBServerSecurityGroup"}],
+            "PubliclyAccessible":"true",
+            "DBName":"csye6225"
+        }
+    },
     "myDynamoDBTable":{  
         "Type":"AWS::DynamoDB::Table",
         "Properties":{  

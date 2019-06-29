@@ -46,7 +46,7 @@ public class ImageService {
 						"The Image already present");
 				return new ResponseEntity<Object>(apiResponse, HttpStatus.BAD_REQUEST);
 			} else {
-				imageJSON = new ImageJson(this.imageDao.saveImageToLocal(file, book));
+				imageJSON = new ImageJson(this.imageDao.saveAttachment(file, book));
 			}
 		} catch (Exception e) {
 			System.err.println(e);
@@ -74,7 +74,7 @@ public class ImageService {
 				}else
 				{
 					//delete actual file from local/S3 bucket
-					this.imageDao.deleteImageFromLocal(imageId);
+					this.imageDao.deleteImage(imageId);
 				}
 				
 			}
@@ -89,10 +89,13 @@ public class ImageService {
 	
 	public ResponseEntity<Object> getImageById(String id){
 		Image image;
+		ImageJson imgJson;
 		
 		try {
 			
-		image=imageDao.getImageFromId(id);		
+		image=imageDao.getImageFromId(id);
+		 imgJson =new ImageJson(image.getId(),imageDao.getImagefromS3(id, image.getUrl()).toString());
+
 		}
 		catch(NoResultException e){
 			ApiResponse resp = new ApiResponse(HttpStatus.NOT_FOUND, "The requested resource could not be found", "Resource not available");
@@ -101,7 +104,7 @@ public class ImageService {
 		
 		if(image != null) {
 	
-			return new ResponseEntity<Object>(new ImageJson(image), HttpStatus.OK);
+			return new ResponseEntity<Object>(imgJson, HttpStatus.OK);
 		}
 		
 		else {
@@ -133,7 +136,7 @@ public class ImageService {
 					return new ResponseEntity<Object>(apiResponse, HttpStatus.NOT_FOUND);
 				}else
 				{
-					this.imageDao.updateAttachmentFromLocal(imageId,imageToBeUpdated, file, book);
+					this.imageDao.updateAttachment(imageId,imageToBeUpdated, file, book);
 				}
 				
 			}
