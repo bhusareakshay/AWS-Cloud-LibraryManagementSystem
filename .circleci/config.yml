@@ -6,37 +6,26 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Aws Cli
+          command: |
+                  sudo apt-get -y install awscli
+      - run:
           name: Build Artifact
           command: |
-            cd webapp
-            ./gradlew war
-            cd build/libs
-            ls -al
-            cd ../../..
+                  cd webapp/LibrarySystem
+                  mvn package
       - run:
-          name: Zip Artifact
+          name: Zip Artifact and yaml file
           command: |
-            echo "Hello the current build number is ${CIRCLE_BUILD_NUM}"
-            pwd
-            ls -al
-            mkdir -p codedeploy_artifact
-            cp infrastructure/aws/codedeploy/*.sh .
-            zip -r csye6225-web-app-${CIRCLE_BUILD_NUM}.zip webapp/build/libs/ROOT.war *.sh *.yml
-            ls -al
-            mv csye6225-web-app-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
-            ls -al
-            pwd
-            cd codedeploy_artifact
-            ls -al
-            pwd
-            cd ..
-            pwd
-            ls -al
+                   mkdir appication 
+                   mv webapp/LibrarySystem/target/LibrarySytem.war application/
+                   mv appspec.yml application/
+                   cd application 
+                   zip application.zip *
+                   chmod 777 aaplication.zip
       - run:
           name: Upload Artifact to S3
-          command: |
-            echo "Hello"
+          command:command: aws s3 cp application/application.zip s3://code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me 
       - run:
           name: Make CodeDeploy API call
-          command: |
-            echo "Hello CodeDeploy" 
+          command: aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=code-deploy.csye6225-spring2019-$AWS_BUCKET_NAME.me,bundleType=zip,key=application.zip    
