@@ -25,7 +25,7 @@ jobs:
                    chmod 777 aaplication.zip
       - run:
           name: Upload Artifact to S3
-          command:command: aws s3 cp application/application.zip s3://code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me 
+          command:aws s3 cp application/application.zip s3://code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me 
       - run:
           name: Make CodeDeploy API call
           command: aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=code-deploy.csye6225-spring2019-$AWS_BUCKET_NAME.me,bundleType=zip,key=application.zip    
