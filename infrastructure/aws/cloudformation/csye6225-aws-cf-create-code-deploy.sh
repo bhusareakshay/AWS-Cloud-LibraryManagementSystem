@@ -1,15 +1,14 @@
 TEMPLATE_NAME=$1
-AMI_ID=$2
-STACK_NAME=$3
-NETWORK_STACK_NAME=$4
-KEY_NAME=$5
-BUCKET_NAME=$6
+STACK_NAME=$2
+AWS_REGION=$3
+AWS_ACCOUNT_ID=$4
+BUCKET_NAME=$5
 
 
-if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ] || [ -z "$6"]
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ]
   then
     echo "Error! Argument Required"
-    echo "Usage - sh script.sh <TemplateFile> <AMI_ID> <Application_Stack_Name> <Network_Stack_Name> <Key_Name> <Bucket_Name>" 
+    echo "Usage - sh script.sh <TemplateFile> <Stack_Name> <AWS_Region> <AWS_Account_Id> <Code_Deploy_S3_Bucket_Name>" 
     exit 1
 fi
 
@@ -24,9 +23,8 @@ STACK_ID=$(\
 aws cloudformation create-stack --stack-name ${STACK_NAME} \
 --template-body file://${TEMPLATE_NAME} \
 --parameters ParameterKey=StackName,ParameterValue=${STACK_NAME} \
-ParameterKey=NetworkStackName,ParameterValue=${NETWORK_STACK_NAME} \
-ParameterKey=AmiId,ParameterValue=${AMI_ID} \
-ParameterKey=KeyName,ParameterValue=${KEY_NAME} \
+ParameterKey=AWSRegion,ParameterValue=${AWS_REGION} \
+ParameterKey=AWSAccountID,ParameterValue=${AWS_ACCOUNT_ID} \
 ParameterKey=BucketName,ParameterValue=${BUCKET_NAME} \
 --capabilities CAPABILITY_NAMED_IAM \
 | jq -r .StackId \
