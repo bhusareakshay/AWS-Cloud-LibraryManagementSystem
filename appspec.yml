@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
       - source: LibrarySystem.war
-destination: /opt/tomcat/webapps
+      destination: /var
 hooks:
 BeforeInstall:
     - location: /opt/tomcat/bin/shutdown.sh
