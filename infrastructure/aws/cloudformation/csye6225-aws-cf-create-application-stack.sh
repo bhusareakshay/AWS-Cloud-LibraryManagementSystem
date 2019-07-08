@@ -1,15 +1,14 @@
 TEMPLATE_NAME=$1
-AMI_ID=$2
-STACK_NAME=$3
-NETWORK_STACK_NAME=$4
-KEY_NAME=$5
-BUCKET_NAME=$6
+STACK_NAME=$2
+NETWORK_STACK_NAME=$3
+KEY_NAME=$4
+BUCKET_NAME=$5
 
 
-if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ] || [ -z "$6"]
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ]
   then
     echo "Error! Argument Required"
-    echo "Usage - sh script.sh <TemplateFile> <AMI_ID> <Application_Stack_Name> <Network_Stack_Name> <Key_Name> <Bucket_Name>" 
+    echo "Usage - sh script.sh <TemplateFile> <Application_Stack_Name> <Network_Stack_Name> <Key_Name> <Bucket_Name>" 
     exit 1
 fi
 
@@ -18,6 +17,10 @@ if [ ! -e $TEMPLATE_NAME ]
      echo "Error! Template File does not exist"
      exit 1
 fi
+
+echo "Fetching latest AMI Image"
+AMI_ID=$(aws ec2 describe-images --owners self --filter "Name=name,Values=csye6225_??????????" --output json | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
+echo "Image ID : $AMI_ID "
 
 echo "Creating Application Stack"
 STACK_ID=$(\
