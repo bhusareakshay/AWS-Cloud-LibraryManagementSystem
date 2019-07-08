@@ -17,12 +17,12 @@ jobs:
       - run:
           name: Zip Artifact and yaml file
           command: |
-                   mkdir appication 
+                   mkdir application 
                    mv webapp/LibrarySystem/target/LibrarySystem.war application/
                    mv appspec.yml application/
                    cd application 
                    zip application.zip *
-                   chmod 777 aaplication.zip
+                   chmod 777 application.zip
       - run:
           name: Upload Artifact to S3
           command: aws s3 cp application/application.zip s3://code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me 
