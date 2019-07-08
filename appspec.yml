@@ -1,17 +1,13 @@
 version: 0.0
 os: linux
 files:
-      - source: LibrarySystem.war
-	destination: /opt/tomcat/webapps
+  - source: LibrarySystem.war
+    destination: /opt/tomcat/webapps
 hooks:
 BeforeInstall:
     - location: /opt/tomcat/bin/shutdown.sh
       timeout: 300
       runas: centos 
-AfterInstall:
-    - location: ./afterInstall.sh
-      timeout: 300
-      runas: centos
 ApplicationStart:
     - location: /opt/tomcat/bin/startup.sh
       timeout: 300
