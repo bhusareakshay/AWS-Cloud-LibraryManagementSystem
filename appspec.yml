@@ -8,10 +8,6 @@ BeforeInstall:
     - location: /opt/tomcat/bin/shutdown.sh
       timeout: 300
       runas: centos 
-AfterInstall:
-    - location: ./afterInstall.sh
-      timeout: 300
-      runas: centos
 ApplicationStart:
     - location: /opt/tomcat/bin/startup.sh
       timeout: 300
