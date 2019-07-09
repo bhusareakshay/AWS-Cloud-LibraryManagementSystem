@@ -5,6 +5,6 @@ files:
     destination: /opt/tomcat/webapps
 hooks:
 ApplicationStart:
-    - location: ./startApplication.sh
+    - location: infrastructure/aws/codedeploy/startApplication.sh
       timeout: 300
       runas: centos
