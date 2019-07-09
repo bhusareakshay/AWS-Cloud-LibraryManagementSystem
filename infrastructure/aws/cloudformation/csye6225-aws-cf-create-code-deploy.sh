@@ -6,7 +6,7 @@ BUCKET_NAME=$3
 if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]
   then
     echo "Error! Argument Required"
-    echo "Usage - sh script.sh <TemplateFile> <Stack_Name> <AWS_Region> <AWS_Account_Id> <Code_Deploy_S3_Bucket_Name>" 
+    echo "Usage - sh script.sh <TemplateFile> <Stack_Name> <Code_Deploy_S3_Bucket_Name>" 
     exit 1
 fi
 
