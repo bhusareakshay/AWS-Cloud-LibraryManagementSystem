@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:latest
     steps:
       - checkout
       - run:
@@ -17,15 +17,17 @@ jobs:
       - run:
           name: Zip Artifact and yaml file
           command: |
-                   mkdir appication 
-                   mv webapp/LibrarySystem/target/LibrarySytem.war application/
+                   mkdir application 
+                   mv webapp/LibrarySystem/target/LibrarySystem.war application/
                    mv appspec.yml application/
+                   mv infrastructure/aws/codedeploy/startApplication.sh application/
                    cd application 
+                   chmod -R 777 *
                    zip application.zip *
-                   chmod 777 aaplication.zip
+                   chmod 777 application.zip
       - run:
           name: Upload Artifact to S3
-          command:command: aws s3 cp application/application.zip s3://code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me 
+          command: aws s3 cp application/application.zip s3://code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me 
       - run:
           name: Make CodeDeploy API call
-          command: aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=code-deploy.csye6225-spring2019-$AWS_BUCKET_NAME.me,bundleType=zip,key=application.zip    
+          command: aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=code-deploy.csye6225-su19-$AWS_BUCKET_NAME.me,bundleType=zip,key=application.zip    

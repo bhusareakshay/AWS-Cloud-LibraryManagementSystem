@@ -1,14 +1,12 @@
 TEMPLATE_NAME=$1
 STACK_NAME=$2
-AWS_REGION=$3
-AWS_ACCOUNT_ID=$4
-BUCKET_NAME=$5
+BUCKET_NAME=$3
 
 
-if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ] || [ -z "$5" ]
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]
   then
     echo "Error! Argument Required"
-    echo "Usage - sh script.sh <TemplateFile> <Stack_Name> <AWS_Region> <AWS_Account_Id> <Code_Deploy_S3_Bucket_Name>" 
+    echo "Usage - sh script.sh <TemplateFile> <Stack_Name> <Code_Deploy_S3_Bucket_Name>" 
     exit 1
 fi
 
@@ -17,6 +15,15 @@ if [ ! -e $TEMPLATE_NAME ]
      echo "Error! Template File does not exist"
      exit 1
 fi
+
+echo "Fetching Account ID from AWS CLI"
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
+echo "ACCOUNT_ID : $AWS_ACCOUNT_ID "
+
+echo "Fetching Region from AWS CLI"
+AWS_REGION=$(aws configure get region)
+echo "REGION : $AWS_REGION "
+
 
 echo "Creating Application Stack"
 STACK_ID=$(\
