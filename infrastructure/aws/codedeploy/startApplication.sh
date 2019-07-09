@@ -1,3 +1,5 @@
 #!/bin/bash
-sudo sh /opt/tomcat/bin/startup.sh
+sudo cd /opt/tomcat
+vi test.txt
+sudo ./startup.sh
 echo "start application called"
