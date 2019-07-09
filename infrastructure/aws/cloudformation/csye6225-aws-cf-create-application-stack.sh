@@ -19,7 +19,7 @@ if [ ! -e $TEMPLATE_NAME ]
 fi
 
 echo "Fetching latest AMI Image"
-AMI_ID=$(aws ec2 describe-images --owners self --filter "Name=name,Values=csye6225_??????????" --output json | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
+AMI_ID=$(aws ec2 describe-images --owners self --filter "Name=ami_name,Values=csye6225_??????????" --output json | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
 echo "Image ID : $AMI_ID "
 
 echo "Creating Application Stack"
