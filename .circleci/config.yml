@@ -20,7 +20,10 @@ jobs:
                    mkdir application 
                    mv webapp/LibrarySystem/target/LibrarySystem.war application/
                    mv appspec.yml application/
+                   mv infrastructure/aws/codedeploy/startApplication.sh application/
+                   mv infrastructure/aws/codedeploy/stopApplication.sh application/
                    cd application 
+                   chmod -R 777 *
                    zip application.zip *
                    chmod 777 application.zip
       - run:
