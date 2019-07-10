@@ -1,1 +1,1 @@
-sudo sh /opt/tomcat/shutdown.sh
+sudo sh /opt/tomcat/bin/shutdown.sh
