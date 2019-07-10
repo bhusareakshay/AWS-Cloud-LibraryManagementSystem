@@ -2,7 +2,7 @@
 
 echo "Test File" > /tmp/tempFile.txt
 echo "Starting tomcat" > /tmp/tempFile.txt
-sudo cd /opt/tomcat/webapps/
-sudo chown -R centos:centos *
-sudo sh /opt/tomcat/bin/startup.sh
+cd /opt/tomcat/webapps/
+chown -R centos:centos *
+sh /opt/tomcat/bin/startup.sh
 echo "Starting tomcat complete" > /tmp/tempFile.txt
