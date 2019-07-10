@@ -3,8 +3,6 @@ os: linux
 files:
   - source: LibrarySystem.war
     destination: /opt/tomcat/webapps
-
-    
 hooks:
 AfterInstall:
     - location: ./startApplication.sh
