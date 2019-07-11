@@ -1,1 +1,4 @@
-sudo sh /opt/tomcat/shutdown.sh
+#! /bin/bash
+
+sudo sh /opt/tomcat/bin/shutdown.sh
+sudo rm -rf /opt/tomcat/webapps/Lib*
