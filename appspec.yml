@@ -1,12 +1,14 @@
 version: 0.0
 os: linux
-
-files:             
-  - source: ./webapp/build/libs/ROOT.war
+files:
+  - source: LibrarySystem.war
     destination: /opt/tomcat/webapps
-
 hooks:
+  ApplicationStop:
+    - location: stopApplication.sh
+      timeout: 350
+      runas: centos
   AfterInstall:
-   - location: ./afterInstall.sh
-     timeout: 180
-     runas: centos
+    - location: startApplication.sh
+      timeout: 350
+      runas: centos
