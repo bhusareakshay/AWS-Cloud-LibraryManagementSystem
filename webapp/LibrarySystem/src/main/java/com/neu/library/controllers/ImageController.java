@@ -21,7 +21,7 @@ public class ImageController {
 	@Autowired
 	ImageService imageService;
 
-	@RequestMapping(value = "/book/{bookId}/image", method = RequestMethod.POST)
+	@RequestMapping(value = "/book/{bookId}/imagerajat", method = RequestMethod.POST)
 	public ResponseEntity<Object> imageToBook(@PathVariable @NotNull String bookId,
 			@RequestParam("file") MultipartFile file) {
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
