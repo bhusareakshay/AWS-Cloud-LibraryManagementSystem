@@ -22,7 +22,7 @@ jobs:
                    mv appspec.yml application/
                    mv infrastructure/aws/codedeploy/startApplication.sh application/
                    mv infrastructure/aws/codedeploy/stopApplication.sh application/
-		   mv infrastructure/aws/codedeploy/cloudwatch-config.json application/
+                   mv infrastructure/aws/codedeploy/cloudwatch-config.json application/
                    cd application 
                    chmod -R 777 *
                    zip application.zip *
