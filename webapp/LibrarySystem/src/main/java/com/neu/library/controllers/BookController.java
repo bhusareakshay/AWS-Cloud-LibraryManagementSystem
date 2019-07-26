@@ -2,8 +2,8 @@
  import java.util.logging.FileHandler;
 
 
-
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.logging.SimpleFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class BookController {
 	@Autowired
 	 StatMetric statsMetric;
 
-	//private static final Logger logger = LoggerFactory.getLogger(BookController.class);
-	Logger logger = Logger.getLogger("LibrarySystemLog"); 
+	private static final Logger logger = LoggerFactory.getLogger(BookController.class);
+	//Logger logger = Logger.getLogger("LibrarySystemLog"); 
 		FileHandler fh;
 	@RequestMapping(value = "/book", method = RequestMethod.POST)
 	public ResponseEntity<Object> addBook(@RequestBody Book book) {
