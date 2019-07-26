@@ -3,6 +3,9 @@ os: linux
 files:
   - source: LibrarySystem.war
     destination: /opt/tomcat/webapps
+  - source: cloudwatch-config.json
+    destination: /opt
+
 hooks:
   ApplicationStop:
     - location: stopApplication.sh
