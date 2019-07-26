@@ -1,6 +1,11 @@
  package com.neu.library.controllers;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
+ import java.util.logging.FileHandler;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.logging.SimpleFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +31,8 @@ public class BookController {
 	 StatMetric statsMetric;
 
 	private static final Logger logger = LoggerFactory.getLogger(BookController.class);
+	//Logger logger = Logger.getLogger("LibrarySystemLog"); 
+		FileHandler fh;
 	@RequestMapping(value = "/book", method = RequestMethod.POST)
 	public ResponseEntity<Object> addBook(@RequestBody Book book) {
 		logger.info("Adding book with ID :"+book.getId());
@@ -33,27 +40,27 @@ public class BookController {
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiResponse errorResponse;
 		if (message.equals("Username does not exist") || message.equals("Invalid Credentials") || message.equals("Username not entered") || message.equals("Password not entered")) {
-			logger.error("Username and invalid credentials");
+			logger.info("Username and invalid credentials");
 			errorResponse = new ApiResponse(HttpStatus.UNAUTHORIZED, message, message);
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.UNAUTHORIZED);
 		}
 		if (StringUtils.isEmpty(book.getTitle())) {
-			logger.error("Title is needed");
+			logger.info("Title is needed");
 			errorResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Title", "Please Enter Title");
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
 		}
 		if (StringUtils.isEmpty(book.getAuthor())) {
-			logger.error("Author is needed");
+			logger.info("Author is needed");
 			errorResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Author", "Please Enter Author");
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
 		}
 		if (StringUtils.isEmpty(book.getIsbn())) {
-			logger.error("ISBN is needed");
+			logger.info("ISBN is needed");
 			errorResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter ISBN", "Please Enter ISBN");
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
 		}
 		if (StringUtils.isEmpty(book.getQuantity())) {
-			logger.error("Quantity is needed");
+			logger.info("Quantity is needed");
 			errorResponse = new ApiResponse(HttpStatus.BAD_REQUEST, "Please Enter Quantity", "Please Enter Qunatity");
 			return new ResponseEntity<Object>(errorResponse, HttpStatus.BAD_REQUEST);
 		}

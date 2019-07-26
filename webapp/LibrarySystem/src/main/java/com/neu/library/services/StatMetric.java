@@ -11,7 +11,7 @@ public class StatMetric {
 	
 	private static final Logger logger = LoggerFactory.getLogger(StatMetric.class);
 	
-	private static final StatsDClient statsd = new NonBlockingStatsDClient("csye6225.webapp.restapi", "localhost", 8125);
+	private static final StatsDClient statsd = new NonBlockingStatsDClient("csye6225.webapp.LibrarySystem", "localhost", 8125);
 	
 	public void increementStat(String endpoint) {
 		logger.info("Incrementing counter for service : " + endpoint);
