@@ -21,7 +21,7 @@ public class BookController {
 	@Autowired
 	BookService bookservice;
 
-	@RequestMapping(value = "/bookrajat", method = RequestMethod.POST)
+	@RequestMapping(value = "/book", method = RequestMethod.POST)
 	public ResponseEntity<Object> addBook(@RequestBody Book book) {
 		String message = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		ApiResponse errorResponse;
