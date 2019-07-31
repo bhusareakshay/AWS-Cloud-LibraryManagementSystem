@@ -1,11 +1,11 @@
 {  
     "AWSTemplateFormatVersion":"2010-09-09",
     "Description":"Code Deploy JSON",
-    "Parameters":{ 
-	   "StackName": {
-            "Type": "String",
-            "Description" : "Please enter string for iam stack name"
-         } , 
+    "Parameters":{  
+        "StackName":{  
+            "Type":"String",
+            "Description":"Please enter string for iam stack name"
+        },
         "AWSRegion":{  
             "Type":"String",
             "Description":"Enter AWS Region"
@@ -96,7 +96,9 @@
                                 "codedeploy:GetApplicationRevision"
                             ],
                             "Resource":[  
-				    {"Fn::Sub": "arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:application:csye6225-webapp"}
+                                {  
+                                    "Fn::Sub":"arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:application:csye6225-webapp"
+                                }
                             ]
                         },
                         {  
@@ -115,9 +117,15 @@
                                 "codedeploy:GetDeploymentConfig"
                             ],
                             "Resource":[  
-				    {"Fn::Sub": "arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:deploymentconfig:CodeDeployDefault.OneAtATime"},
-				    {"Fn::Sub":"arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:deploymentconfig:CodeDeployDefault.HalfAtATime"},
-				    {"Fn::Sub": "arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:deploymentconfig:CodeDeployDefault.AllAtOnce"}
+                                {  
+                                    "Fn::Sub":"arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:deploymentconfig:CodeDeployDefault.OneAtATime"
+                                },
+                                {  
+                                    "Fn::Sub":"arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:deploymentconfig:CodeDeployDefault.HalfAtATime"
+                                },
+                                {  
+                                    "Fn::Sub":"arn:aws:codedeploy:${AWSRegion}:${AWSAccountID}:deploymentconfig:CodeDeployDefault.AllAtOnce"
+                                }
                             ]
                         }
                     ]
@@ -283,11 +291,14 @@
                 },
                 "DeploymentGroupName":"csye6225-webapp-deployment",
                 "ServiceRoleArn":{  
-                     "Fn::GetAtt": [ "CodeDeployServiceRole" , "Arn" ]
+                    "Fn::GetAtt":[  
+                        "CodeDeployServiceRole",
+                        "Arn"
+                    ]
                 },
                 "DeploymentStyle":{  
                     "DeploymentType":"IN_PLACE",
-		    "DeploymentOption" : "WITHOUT_TRAFFIC_CONTROL"
+                    "DeploymentOption":"WITHOUT_TRAFFIC_CONTROL"
                 },
                 "Ec2TagFilters":[  
                     {  
@@ -304,6 +315,64 @@
                     ]
                 }
             }
+        },
+        "LambdaPolicy":{  
+            "Type":"AWS::IAM::ManagedPolicy",
+            "Properties":{  
+                "Description":"Lambda Policy",
+                "ManagedPolicyName":"Lambda-Execution-Policy",
+                "PolicyDocument":{  
+                    "Version":"2012-10-17",
+                    "Statement":[  
+                        {  
+                            "Effect":"Allow",
+                            "Action":"ses:SendEmail",
+                            "Resource":{  
+                                "Fn::Sub":"arn:aws:ses:${AWSRegion}:${AWSAccountID}:identity/csye6225-su19-${BucketName}.me"
+                            }
+                        },
+                        {  
+                            "Effect":"Allow",
+                            "Action":[  
+                                "dynamodb:*",
+                                "lambda:*",
+                                "sns:*",
+                                "s3:*",
+                                "logs:*",
+                                "cloudwatch:*"
+                            ],
+                            "Resource":"*"
+                        }
+                    ]
+                }
+            }
+        },
+        "LambdaExecutionRole":{  
+            "Type":"AWS::IAM::Role",
+            "Properties":{  
+                "AssumeRolePolicyDocument":{  
+                    "Version":"2012-10-17",
+                    "Statement":[  
+                        {  
+                            "Effect":"Allow",
+                            "Principal":{  
+                                "Service":[  
+                                    "lambda.amazonaws.com"
+                                ]
+                            },
+                            "Action":[  
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "ManagedPolicyArns":[  
+                    {  
+                        "Ref":"LambdaPolicy"
+                    }
+                ],
+                "RoleName":"LambdaExecutionRole"
+            }
         }
     },
     "Outputs":{  
@@ -315,6 +384,15 @@
             "Export":{  
                 "Name":"EC2InstanceProfile"
             }
-        }
+        },
+	"LambdaExecutionRole":{
+		"Description" : "Role to execute Lambda function",
+		"Value":{
+			"Ref":"LambdaExecutionRole"
+		},
+		"Export":{
+			"Name":"LambdaExecutionRole"
+		}
+	}
     }
 }
