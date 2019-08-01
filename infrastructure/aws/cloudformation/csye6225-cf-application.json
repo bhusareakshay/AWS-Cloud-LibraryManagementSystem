@@ -252,7 +252,7 @@
   		"Properties" : {
       			"Action" : "lambda:InvokeFunction",
       			"FunctionName" : {"Ref":"myLambdaFunction"},
-      			"Principal" : {"Service":"sns.amazonaws.com"}
+      			"Principal" : "sns.amazonaws.com"
     		}
 	}
     }

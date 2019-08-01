@@ -339,7 +339,9 @@
                                 "sns:*",
                                 "s3:*",
                                 "logs:*",
-                                "cloudwatch:*"
+                                "cloudwatch:*",
+				"xray:PutTelemetryRecords",
+                	   	"xray:PutTraceSegments"
                             ],
                             "Resource":"*"
                         }
@@ -409,7 +411,7 @@
 	"LambdaExecutionRole":{
 		"Description" : "Role to execute Lambda function",
 		"Value":{
-			"Ref":"LambdaExecutionRole"
+			"Fn::GetAtt": [ "LambdaExecutionRole" , "Arn" ] 
 		},
 		"Export":{
 			"Name":"LambdaExecutionRole"
