@@ -389,7 +389,7 @@
                                "lambda:PutFunctionConcurrency",
 			       "lambda:UpdateFunctionCode"
                            ],
-                           "Resource": {"Fn::Sub" : "arn:aws:lambda:${Region}:${AccountId}:function:*"}
+                           "Resource": {"Fn::Sub" : "arn:aws:lambda:${AWSRegion}:${AWSAccountID}:function:*"}
                        }]       
 	       },
 	       "Users": ["circleci"]
