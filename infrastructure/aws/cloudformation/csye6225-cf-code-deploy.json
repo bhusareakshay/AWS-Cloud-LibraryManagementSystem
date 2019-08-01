@@ -373,7 +373,28 @@
                 ],
                 "RoleName":"LambdaExecutionRole"
             }
-        }
+        },
+	"CircleCILambdaPolicy":{
+           "Type" : "AWS::IAM::ManagedPolicy",
+           "Properties" : {
+               "ManagedPolicyName" : "CircleCI-Lambda-Policy",
+	       "PolicyDocument":{
+	           "Version": "2012-10-17",
+                   "Statement": [
+                       {
+                           "Sid": "DevelopFunctions",
+                           "Effect": "Allow", 
+                           "Action": [
+                               "lambda:AddPermission",
+                               "lambda:PutFunctionConcurrency",
+			       "lambda:UpdateFunctionCode"
+                           ],
+                           "Resource": {"Fn::Sub" : "arn:aws:lambda:${Region}:${AccountId}:function:*"}
+                       }]       
+	       },
+	       "Users": ["circleci"]
+	   }    
+       }
     },
     "Outputs":{  
         "EC2InstanceProfile":{  
