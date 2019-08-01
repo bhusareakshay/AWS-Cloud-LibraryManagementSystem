@@ -235,7 +235,8 @@
                     },
                     {  
                         "Ref":"EC2UploadToS3Policy"
-                    }
+                    },
+		   "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
                 ],
                 "RoleName":"CodeDeployEC2ServiceRole"
             }
