@@ -253,7 +253,7 @@
                        "Action"   : [
                             "SNS:Publish"
                        ],
-                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${Region}:${AccountId}:password_reset"}
+                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${AWSRegion}:${AWSAccountID}:password_reset"}
                    } ]
                }
            }	       
@@ -407,7 +407,8 @@
                            "Action": [
                                "lambda:AddPermission",
                                "lambda:PutFunctionConcurrency",
-			       "lambda:UpdateFunctionCode"
+			       "lambda:UpdateFunctionCode",
+			       "s3:*"
                            ],
                            "Resource": {"Fn::Sub" : "arn:aws:lambda:${AWSRegion}:${AWSAccountID}:function:*"}
                        }]       
