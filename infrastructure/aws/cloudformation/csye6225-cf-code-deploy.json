@@ -236,11 +236,28 @@
                     {  
                         "Ref":"EC2UploadToS3Policy"
                     },
-		   "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+		   "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+		   {"Ref" : "EC2PublishSNSPolicy" }
                 ],
                 "RoleName":"CodeDeployEC2ServiceRole"
             }
         },
+	"EC2PublishSNSPolicy":{
+           "Type" : "AWS::IAM::ManagedPolicy",
+           "Properties" : {
+               "ManagedPolicyName" : "EC2-Publish-SNS",
+               "PolicyDocument" : {
+                   "Version" : "2012-10-17",
+                   "Statement": [ {
+                       "Effect"   : "Allow",
+                       "Action"   : [
+                            "SNS:Publish"
+                       ],
+                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${Region}:${AccountId}:password_reset"}
+                   } ]
+               }
+           }	       
+       },
         "EC2InstanceProfile":{  
             "Type":"AWS::IAM::InstanceProfile",
             "Properties":{  
