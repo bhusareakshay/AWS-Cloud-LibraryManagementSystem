@@ -407,7 +407,8 @@
                            "Action": [
                                "lambda:AddPermission",
                                "lambda:PutFunctionConcurrency",
-			       "lambda:UpdateFunctionCode"
+			       "lambda:UpdateFunctionCode",
+			       "s3:*"
                            ],
                            "Resource": {"Fn::Sub" : "arn:aws:lambda:${AWSRegion}:${AWSAccountID}:function:*"}
                        }]       
