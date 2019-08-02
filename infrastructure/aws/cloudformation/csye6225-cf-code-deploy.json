@@ -253,7 +253,7 @@
                        "Action"   : [
                             "SNS:Publish"
                        ],
-                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${Region}:${AccountId}:password_reset"}
+                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${AWSRegion}:${AWSAccountID}:password_reset"}
                    } ]
                }
            }	       
