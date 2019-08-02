@@ -184,6 +184,10 @@
             "Type":"AWS::DynamoDB::Table",
             "Properties":{  
                 "TableName":"csye6225",
+		"TimeToLiveSpecification":{
+			"AttributeName" : "ttl",
+		        "Enabled" : "true"	
+		},
                 "AttributeDefinitions":[  
                     {  
                         "AttributeName":"id",
