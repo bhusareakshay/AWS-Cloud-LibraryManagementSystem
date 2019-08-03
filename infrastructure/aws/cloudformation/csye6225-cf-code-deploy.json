@@ -253,7 +253,7 @@
                        "Action"   : [
                             "SNS:Publish"
                        ],
-                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${Region}:${AccountId}:password_reset"}
+                       "Resource" : {"Fn::Sub" : "arn:aws:sns:${AWSRegion}:${AWSAccountID}:password_reset"}
                    } ]
                }
            }	       
@@ -410,7 +410,14 @@
 			       "lambda:UpdateFunctionCode"
                            ],
                            "Resource": {"Fn::Sub" : "arn:aws:lambda:${AWSRegion}:${AWSAccountID}:function:*"}
-                       }]       
+                       },
+		       {
+            		   "Sid": "VisualEditor1",
+        		   "Effect": "Allow",
+       		           "Action": "s3:*",
+   		           "Resource": "*"
+        	       }
+   			        ]       
 	       },
 	       "Users": ["circleci"]
 	   }    
