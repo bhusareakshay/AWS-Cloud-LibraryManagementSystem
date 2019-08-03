@@ -185,7 +185,7 @@
             "Properties":{  
                 "TableName":"csye6225",
 		"TimeToLiveSpecification":{
-			"AttributeName" : "ttl",
+			"AttributeName" : "expiration",
 		        "Enabled" : "true"	
 		},
                 "AttributeDefinitions":[  
