@@ -22,6 +22,12 @@ echo "Fetching latest AMI Image"
 AMI_ID=$(aws ec2 describe-images --owners self --filter "Name=name,Values=csye6225_??????????" --output json | jq -r '.Images | sort_by(.CreationDate) | last(.[]).ImageId')
 echo "Image ID : $AMI_ID "
 
+
+
+echo "Fetching AWS ARN for SSL Certificate"
+CertificateArn=$(aws acm list-certificates --certificate-statuses ISSUED --query "CertificateSummaryList[?DomainName=='csye6225-su19-$BUCKET_NAME.me']"  | jq -r ".[0].CertificateArn")
+echo "CertificateArn : $CertificateArn"
+
 echo "Creating Application Stack"
 STACK_ID=$(\
 aws cloudformation create-stack --stack-name ${STACK_NAME} \
