@@ -286,6 +286,17 @@
       			"HostedZoneName" : {"Fn::Sub":"csye6225-su19-${BucketName}.me"},
       			"Name" : {"Fn::Sub":"csye6225-su19-${BucketName}.me"}
     		}
+	},
+	"HttpsListener":{
+  		"Type" : "AWS::ElasticLoadBalancingV2::Listener",
+  		"Properties" : {
+      			"Certificates" : [ {"CertificateArn" : {"Ref":"CertificateArn"}}],
+      			"DefaultActions" : [ {"Type" : "forward",
+					      "TargetGroupArn": {"Ref":"ALBTargetGroup"} }],
+      			"LoadBalancerArn" : {"Ref":"ApplicationLoadBalancer"},
+      			"Port" : 443,
+      			"Protocol" : "HTTPS"
+    		}
 	}
     }
 }
