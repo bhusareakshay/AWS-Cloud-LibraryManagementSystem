@@ -323,7 +323,7 @@
 				 "DNSName" : {"Fn::GetAtt":["ApplicationLoadBalancer","DNSName"]},
   				 "HostedZoneId" : {"Fn::GetAtt":["ApplicationLoadBalancer","CanonicalHostedZoneID"]}
 			},
-      			"HostedZoneName" : {"Fn::Sub":"csye6225-su19-${BucketName}.me"},
+      			"HostedZoneName" : {"Fn::Sub":"csye6225-su19-${BucketName}.me."},
       			"Name" : {"Fn::Sub":"csye6225-su19-${BucketName}.me"},
 			"Type" : "A"
     		}
