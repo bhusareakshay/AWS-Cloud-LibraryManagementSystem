@@ -30,12 +30,6 @@
                "GroupDescription" : "Security group for the ELB",
                "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${NetworkStackName}-vpcid" } },
                "SecurityGroupIngress" : [
-                   {
-	                  "IpProtocol" : "tcp", 
-	 	                "FromPort" : 80, 
-		                "ToPort" : 80, 
-		                "CidrIp" : "0.0.0.0/0"
-		               },
 		              {
 		                "IpProtocol" : "tcp",
                     "FromPort" : 443, 
@@ -312,7 +306,7 @@
         	"Subnets" : [{"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}},
 			     {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}},
 			     {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet3id"}}],
-		"Scheme" : "internet-facing",
+	        "Scheme" : "internet-facing",
 		"Name" : "LOAD-BALANCER"
       		}
     	},
