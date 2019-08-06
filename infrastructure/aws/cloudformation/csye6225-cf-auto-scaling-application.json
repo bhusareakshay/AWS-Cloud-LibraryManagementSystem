@@ -272,7 +272,8 @@
 			     {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}},
 			     {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet3id"}}],
 		"Scheme" : "internet-facing",
-		"Name" : "LOAD-BALANCER"
+		"Name" : "LOAD-BALANCER",
+		"SecurityGroups": [{"Ref":"ELBSecurityGroup"}]
       		}
     	},
 
