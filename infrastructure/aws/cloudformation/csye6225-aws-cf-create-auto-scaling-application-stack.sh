@@ -25,10 +25,10 @@ echo "Image ID : $AMI_ID "
 
 
 echo "Fetching AWS ARN for SSL Certificate"
-CertificateArn=$(aws acm list-certificates --certificate-statuses ISSUED --query "CertificateSummaryList[?DomainName=='csye6225-su19-$BUCKET_NAME.me']"  | jq -r ".[0].CertificateArn")
-echo "CertificateArn : $CertificateArn"
+CERTIFICATE_ARN=$(aws acm list-certificates --certificate-statuses ISSUED --query "CertificateSummaryList[?DomainName=='csye6225-su19-$BUCKET_NAME.me']"  | jq -r ".[0].CertificateArn")
+echo "CertificateArn : $CERTIFICATE_ARN"
 
-echo "Creating Application Stack"
+echo "Creating Auto-Scaling Application Stack"
 STACK_ID=$(\
 aws cloudformation create-stack --stack-name ${STACK_NAME} \
 --template-body file://${TEMPLATE_NAME} \
@@ -37,6 +37,7 @@ ParameterKey=NetworkStackName,ParameterValue=${NETWORK_STACK_NAME} \
 ParameterKey=AmiId,ParameterValue=${AMI_ID} \
 ParameterKey=KeyName,ParameterValue=${KEY_NAME} \
 ParameterKey=BucketName,ParameterValue=${BUCKET_NAME} \
+ParameterKey=CertificateArn,ParameterValue=${CERTIFICATE_ARN} \
 --capabilities CAPABILITY_NAMED_IAM \
 | jq -r .StackId \
 )

@@ -19,9 +19,13 @@
             "Description":"Please enter string for Key Name"
         },
         "BucketName":{  
-            "Description":"Enter S# Bucket Name",
+            "Description":"Enter Bucket Name",
             "Type":"String"
-        }
+        },
+	"CertificateArn":{
+	    "Description":"Enter Certificate Arn",
+	    "Type":"String"
+	}
     },
     "Resources":{  
       "ELBSecurityGroup": {
