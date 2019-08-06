@@ -79,43 +79,48 @@
                 ]
             }
         },
-        "myEC2Instance":{  
-            "Type":"AWS::EC2::Instance",
-            "Properties":{  
-                "ImageId":{  
+        "WebServerGroup" : {
+
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+
+      "Properties" : {
+
+        "VPCZoneIdentifier" : [{"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}},
+                             {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}},
+                             {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet3id"}}],
+
+
+        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+
+        "MinSize" : "3",
+
+        "MaxSize" : "7",
+        
+        "Cooldown" : "60",
+
+        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ]
+
+      }
+      },
+      "LaunchConfig" : {
+        "Type" : "AWS::AutoScaling::LaunchConfiguration",
+        "Properties" : {
+          "ImageId":{  
                     "Ref":"AmiId"
                 },
-                "InstanceType":"t2.micro",
-                "KeyName":{  
+          "InstanceType":"t2.micro",
+          "KeyName":{  
                     "Ref":"KeyName"
                 },
-                "Tags":[  
-                    {  
-                        "Key":"Environment",
-                        "Value":"Cloud"
-                    }
-                ],
-                "NetworkInterfaces":[  
-                    {  
-                        "GroupSet":[  
-                            {  
-                                "Ref":"WebServerSecurityGroup"
-                            }
-                        ],
-                        "AssociatePublicIpAddress":"true",
-                        "DeviceIndex":"0",
-                        "DeleteOnTermination":"true",
-                        "SubnetId":{  
-                            "Fn::ImportValue":{  
-                                "Fn::Sub":"${NetworkStackName}-subnet1id"
-                            }
-                        }
-                    }
-                ],
-                "IamInstanceProfile":{  
+          "AssociatePublicIpAddress" : "true",
+          "IamInstanceProfile":{  
                     "Fn::ImportValue":"EC2InstanceProfile"
                 },
-                "UserData":{  
+          "LaunchConfigurationName" : "asg_launch_config",
+          "SecurityGroups":[{
+                    "Ref":"InstanceSecurityGroup"
+                }],
+          "UserData":{  
                     "Fn::Base64":{  
                         "Fn::Join":[  
                             "",
@@ -257,6 +262,29 @@
       			"Action" : "lambda:InvokeFunction",
       			"FunctionName" : {"Ref":"myLambdaFunction"},
       			"Principal" : "sns.amazonaws.com"
+    		}
+	},
+
+	"ApplicationLoadBalancer" : {
+      		"Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      		"Properties" : {
+        	"Subnets" : [{"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}},
+			     {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}},
+			     {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet3id"}}],
+		"Scheme" : "internet-facing",
+		"Name" : "LOAD-BALANCER"
+      		}
+    	},
+
+	"Route53RecordSet":{
+		"Type" : "AWS::Route53::RecordSet",
+  		"Properties" : {
+      			"AliasTarget" : {
+				 "DNSName" : {"Fn::GetAtt":["ApplicationLoadBalancer","DNSName"]},
+  				 "HostedZoneId" : {"Fn::GetAtt":["ApplicationLoadBalancer","CanonicalHostedZoneID"]}
+			},
+      			"HostedZoneName" : {"Fn::Sub":"csye6225-su19-${BucketName}.me"},
+      			"Name" : {"Fn::Sub":"csye6225-su19-${BucketName}.me"}
     		}
 	}
     }
