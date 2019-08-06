@@ -24,6 +24,26 @@
         }
     },
     "Resources":{  
+      "ELBSecurityGroup": {
+	   "Type" : "AWS::EC2::SecurityGroup",
+           "Properties" : {
+               "GroupDescription" : "Security group for the ELB",
+               "VpcId" : { "Fn::ImportValue" : {"Fn::Sub": "${NetworkStackName}-vpcid" } },
+               "SecurityGroupIngress" : [
+                   {
+	                  "IpProtocol" : "tcp", 
+	 	                "FromPort" : 80, 
+		                "ToPort" : 80, 
+		                "CidrIp" : "0.0.0.0/0"
+		               },
+		              {
+		                "IpProtocol" : "tcp",
+                    "FromPort" : 443, 
+                    "ToPort" : 443, 
+                    "CidrIp" : "0.0.0.0/0"
+		               }]
+               }	   
+       },
         "WebServerSecurityGroup":{  
             "Type":"AWS::EC2::SecurityGroup",
             "Properties":{  
@@ -33,26 +53,19 @@
                         "Fn::Sub":"${NetworkStackName}-vpcid"
                     }
                 },
-                "SecurityGroupIngress":[  
-                    {  
-                        "IpProtocol":"tcp",
-                        "CidrIp":"0.0.0.0/0",
-                        "FromPort":22,
-                        "ToPort":22
-                    },
-                    {  
-                        "IpProtocol":"tcp",
-                        "CidrIp":"0.0.0.0/0",
-                        "FromPort":80,
-                        "ToPort":80
-                    },
-                    {  
-                        "IpProtocol":"tcp",
-                        "CidrIp":"0.0.0.0/0",
-                        "FromPort":443,
-                        "ToPort":443
-                    }
-                ]
+                 "SecurityGroupIngress" : [ {
+                  "IpProtocol" : "tcp",
+                  "FromPort" : "80",
+                  "ToPort" : "80",
+                  "SourceSecurityGroupId" : { "Fn::GetAtt": [ "ELBSecurityGroup" , "GroupId" ] }
+              },
+              {
+                  "IpProtocol" : "tcp",
+                  "FromPort" : "22",
+                  "ToPort" : "22",
+                  "CidrIp" : "0.0.0.0/0"
+              }
+               ]
             }
         },
         "DBServerSecurityGroup":{  
@@ -91,6 +104,16 @@
 
 
         "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+        
+        "Tags": [
+                {
+                    "ResourceType": "auto-scaling-group",
+                    "ResourceId": "my-asg",
+                    "PropagateAtLaunch": true,
+                    "Key":"Environment",
+                    "Value":"Cloud"
+                }
+            ],
 
         "MinSize" : "3",
 
@@ -118,7 +141,7 @@
                 },
           "LaunchConfigurationName" : "asg_launch_config",
           "SecurityGroups":[{
-                    "Ref":"InstanceSecurityGroup"
+                    "Ref":"WebServerSecurityGroup"
                 }],
           "UserData":{  
                     "Fn::Base64":{  
@@ -140,6 +163,24 @@
                 }
             }
         },
+        
+	    "ALBTargetGroup": {
+    	"Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+        "Properties": {
+        "HealthCheckIntervalSeconds": 30,
+        "HealthCheckTimeoutSeconds": 5,
+        "HealthyThresholdCount": 3,
+        "Port": 80,
+        "Protocol": "HTTP",
+        "UnhealthyThresholdCount": 5,
+        "VpcId": {
+           "Fn::ImportValue":{  
+                        "Fn::Sub":"${NetworkStackName}-vpcid"
+                    }
+        }
+    }
+
+},
         "myDBSubnetGroup":{  
             "Type":"AWS::RDS::DBSubnetGroup",
             "Properties":{  
