@@ -405,7 +405,7 @@
 	},
 	"CodeDeployServiceRole":{
 		"Description": "Code Deploy Service Role",
-		"Value":{ "Fn""GetAtt" : ["CodeDeployServiceRole","Arn"]},
+		"Value":{ "Fn::GetAtt" : ["CodeDeployServiceRole","Arn"]},
 		"Export":{"Name":"CodeDeployServiceRole"}
 	}
     }
