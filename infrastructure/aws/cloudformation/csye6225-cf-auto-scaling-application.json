@@ -91,38 +91,27 @@
             }
         },
         "WebServerGroup" : {
-
-      "Type" : "AWS::AutoScaling::AutoScalingGroup",
-
-      "Properties" : {
-
-        "VPCZoneIdentifier" : [{"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}},
-                             {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}},
-                             {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet3id"}}],
-
-
-        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
-        
-        "Tags": [
-                {
-                    "ResourceType": "auto-scaling-group",
-                    "ResourceId": "my-asg",
-                    "PropagateAtLaunch": true,
-                    "Key":"Environment",
-                    "Value":"Cloud"
-                }
-            ],
-
-        "MinSize" : "3",
-
-        "MaxSize" : "7",
-        
-        "Cooldown" : "60",
-
-        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ]
-
-      }
-      },
+		"Type" : "AWS::AutoScaling::AutoScalingGroup",
+		"Properties" : {
+		"VPCZoneIdentifier" : [{"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet1id"}},
+	                               {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet2id"}},
+          	                       {"Fn::ImportValue":{"Fn::Sub":"${NetworkStackName}-subnet3id"}}],	
+	        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+	        "Tags": [
+                	{
+                    		"ResourceType": "auto-scaling-group",
+                    		"ResourceId": "my-asg",
+                    		"PropagateAtLaunch": true,
+                    		"Key":"Environment",
+                    		"Value":"Cloud"
+                	}
+            	],
+	        "MinSize" : "3",
+	        "MaxSize" : "7",
+      		"Cooldown" : "60",
+	        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ]
+      		}
+      	},
       "LaunchConfig" : {
         "Type" : "AWS::AutoScaling::LaunchConfiguration",
         "Properties" : {
@@ -248,6 +237,42 @@
                     "ReadCapacityUnits":"5",
                     "WriteCapacityUnits":"5"
                 }
+            }
+        },
+	"CodeDeployApplication":{  
+            "Type":"AWS::CodeDeploy::Application",
+            "Properties":{  
+                "ApplicationName":"csye6225-webapp",
+                "ComputePlatform":"Server"
+            }
+        },
+        "CodeDeployDeploymentGroup":{  
+            "Type":"AWS::CodeDeploy::DeploymentGroup",
+            "Properties":{  
+                "ApplicationName":{  
+                    "Ref":"CodeDeployApplication"
+                },
+                "DeploymentGroupName":"csye6225-webapp-deployment",
+                "ServiceRoleArn":{"Fn::ImportValue":"CodeDeployServiceRole"},
+                "DeploymentStyle":{  
+                    "DeploymentType":"IN_PLACE",
+                    "DeploymentOption":"WITHOUT_TRAFFIC_CONTROL"
+                },
+                "Ec2TagFilters":[  
+                    {  
+                        "Key":"Environment",
+                        "Value":"Cloud",
+                        "Type":"KEY_AND_VALUE"
+                    }
+                ],
+                "DeploymentConfigName":"CodeDeployDefault.AllAtOnce",
+                "AutoRollbackConfiguration":{  
+                    "Enabled":"true",
+                    "Events":[  
+                        "DEPLOYMENT_FAILURE"
+                    ]
+                },
+		"AutoScalingGroups":[{"Ref":"WebServerGroup"}]
             }
         },
         "mySNSTopic":{  
