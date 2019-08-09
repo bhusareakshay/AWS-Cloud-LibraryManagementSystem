@@ -31,7 +31,7 @@ echo "CertificateArn : $CERTIFICATE_ARN"
 echo "Creating Auto-Scaling Application Stack"
 STACK_ID=$(\
 aws cloudformation create-stack --stack-name ${STACK_NAME} \
---template-body file://${TEMPLATE_NAME} \
+--template-url https://s3.amazonaws.com/code-deploy.csye6225-su19-${BUCKET_NAME}.me/csye6225-cf-auto-scaling-application.json \
 --parameters ParameterKey=StackName,ParameterValue=${STACK_NAME} \
 ParameterKey=NetworkStackName,ParameterValue=${NETWORK_STACK_NAME} \
 ParameterKey=AmiId,ParameterValue=${AMI_ID} \
