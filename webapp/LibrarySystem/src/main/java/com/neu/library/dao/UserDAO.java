@@ -15,6 +15,7 @@ public class UserDAO {
 	
 	@Transactional
 	public void saveUser(User user) {
+		
 		this.entityManager.merge(user);
 	}
 	
