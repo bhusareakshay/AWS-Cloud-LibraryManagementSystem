@@ -11,7 +11,7 @@ import com.neu.library.model.User;
 @Service
 public class UserDAO {
 	@PersistenceContext
-	EntityManager entityManager;
+	private EntityManager entityManager;
 	
 	@Transactional
 	public void saveUser(User user) {
