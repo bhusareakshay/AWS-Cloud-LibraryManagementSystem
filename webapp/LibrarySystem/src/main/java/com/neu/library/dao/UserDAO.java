@@ -42,7 +42,7 @@ public class UserDAO {
 		
 		return hashed_pw;
 	}
-
+	@Transactional
 	public int checkIfUserExists(String email) {
 		
 		int result = 0;
