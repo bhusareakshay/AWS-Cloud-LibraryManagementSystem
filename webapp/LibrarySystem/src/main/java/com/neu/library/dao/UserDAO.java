@@ -17,7 +17,6 @@ public class UserDAO {
 	public void saveUser(User user) {
 		
 		this.entityManager.merge(user);
-		this.entityManager.close();
 	}
 	
 	public User getUser(String username) {
