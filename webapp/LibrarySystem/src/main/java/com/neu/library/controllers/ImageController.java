@@ -3,8 +3,8 @@ package com.neu.library.controllers;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 
-import javax.validation.constraints.NotNull;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.logging.SimpleFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
